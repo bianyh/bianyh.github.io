@@ -68,60 +68,60 @@
       <section class="band" id="figures">
         <div class="section-title"><h2>图表速读</h2></div>
         <div class="visual-list">
-            <article class="visual-card">
-              <div class="visual-media"><img src="assets/022.jpg" alt="Figure 1: attention-based selection vs. information-driven selection"><img src="assets/022_avp.png" alt="Figure 1: attention-based selection vs. information-driven selection"></div>
-              <div class="visual-copy">
-                <p class="eyebrow">figure</p>
-                <h3>Figure 1: attention-based selection vs. information-driven selection</h3>
-                <p class="original">A comparison of regions selected by different strategies. Attention-driven regions are scattered, while information-gain selection focuses on task-relevant evidence.</p>
-                <p>这张图展示同一张餐食图片上两种选区策略的差异。注意力 Top-K 更容易分散到局部纹理或背景，AVP 会优先寻找能最大降低模型不确定性的区域，因此更可能靠近答案证据。</p>
-              </div>
-            </article>
-            
+    <article class="visual-card">
+      <div class="visual-media"><img src="assets/022.jpg" alt="Figure 1: attention-based selection vs. information-driven selection"><img src="assets/022_avp.png" alt="Figure 1: attention-based selection vs. information-driven selection"></div>
+      <div class="visual-copy">
+        <p class="eyebrow">figure</p>
+        <h3>Figure 1: attention-based selection vs. information-driven selection</h3>
+        <p class="original">A comparison of regions selected by different strategies. Attention-driven regions are scattered, while information-gain selection focuses on task-relevant evidence.</p>
+        <p>这张图展示同一张餐食图片上两种选区策略的差异。注意力 Top-K 更容易分散到局部纹理或背景，AVP 会优先寻找能最大降低模型不确定性的区域，因此更可能靠近答案证据。</p>
+      </div>
+    </article>
+    
 
-            <article class="visual-card">
-              <div class="visual-media"><img src="assets/Framework_new.png" alt="Framework overview"></div>
-              <div class="visual-copy">
-                <p class="eyebrow">figure</p>
-                <h3>Framework overview</h3>
-                <p class="original">An overview of AIM-CoT. CAG enhances the query, DAT detects when visual evidence is needed, and AVP selects informative regions for insertion.</p>
-                <p>框架图可以按 Trigger-Select-Insert 读：CAG 先让文本查询包含更多视觉语义锚点；生成过程中 DAT 监控文本到视觉的注意力转移；触发后 AVP 通过信息增益逐步选出区域并插入上下文。</p>
-              </div>
-            </article>
-            
+    <article class="visual-card">
+      <div class="visual-media"><img src="assets/Framework_new.png" alt="Framework overview"></div>
+      <div class="visual-copy">
+        <p class="eyebrow">figure</p>
+        <h3>Framework overview</h3>
+        <p class="original">An overview of AIM-CoT. CAG enhances the query, DAT detects when visual evidence is needed, and AVP selects informative regions for insertion.</p>
+        <p>框架图可以按 Trigger-Select-Insert 读：CAG 先让文本查询包含更多视觉语义锚点；生成过程中 DAT 监控文本到视觉的注意力转移；触发后 AVP 通过信息增益逐步选出区域并插入上下文。</p>
+      </div>
+    </article>
+    
 
-            <article class="visual-card">
-              <div class="visual-media"><img src="assets/prompt_template.png" alt="CAG prompt template"></div>
-              <div class="visual-copy">
-                <p class="eyebrow">figure</p>
-                <h3>CAG prompt template</h3>
-                <p class="original">Template and example of context enhancement by CAG.</p>
-                <p>CAG 的提示模板不是为了生成最终答案，而是为了生成与问题相关的细粒度图像描述。这些描述作为语义锚点，帮助后续注意力图更贴近真正证据。</p>
-              </div>
-            </article>
-            
+    <article class="visual-card">
+      <div class="visual-media"><img src="assets/prompt_template.png" alt="CAG prompt template"></div>
+      <div class="visual-copy">
+        <p class="eyebrow">figure</p>
+        <h3>CAG prompt template</h3>
+        <p class="original">Template and example of context enhancement by CAG.</p>
+        <p>CAG 的提示模板不是为了生成最终答案，而是为了生成与问题相关的细粒度图像描述。这些描述作为语义锚点，帮助后续注意力图更贴近真正证据。</p>
+      </div>
+    </article>
+    
 
-            <article class="visual-card">
-              <div class="visual-media"><img src="assets/intuitive_example_IG_vs_AS.png" alt="Qualitative case: information gain vs. attention"></div>
-              <div class="visual-copy">
-                <p class="eyebrow">figure</p>
-                <h3>Qualitative case: information gain vs. attention</h3>
-                <p class="original">Qualitative comparison on ScienceQA showing AIM-CoT selecting visual variables needed for reasoning.</p>
-                <p>案例图说明 AVP 的选择不是看图像上“显眼”的东西，而是看当前推理步骤最缺什么信息。例如物理题中距离、尺寸等变量比大面积背景更关键。</p>
-              </div>
-            </article>
-            
+    <article class="visual-card">
+      <div class="visual-media"><img src="assets/intuitive_example_IG_vs_AS.png" alt="Qualitative case: information gain vs. attention"></div>
+      <div class="visual-copy">
+        <p class="eyebrow">figure</p>
+        <h3>Qualitative case: information gain vs. attention</h3>
+        <p class="original">Qualitative comparison on ScienceQA showing AIM-CoT selecting visual variables needed for reasoning.</p>
+        <p>案例图说明 AVP 的选择不是看图像上“显眼”的东西，而是看当前推理步骤最缺什么信息。例如物理题中距离、尺寸等变量比大面积背景更关键。</p>
+      </div>
+    </article>
+    
 
-            <article class="visual-card">
-              <div class="visual-media"><img src="assets/delta_vs_rouge_l.png" alt="Sensitivity of delta"><img src="assets/delta_vs_count.png" alt="Sensitivity of delta"></div>
-              <div class="visual-copy">
-                <p class="eyebrow">figure</p>
-                <h3>Sensitivity of delta</h3>
-                <p class="original">Sensitivity analysis of the trigger threshold delta.</p>
-                <p>阈值 delta 控制 DAT 触发频率。过低会插入太频繁，过高会错过需要视觉证据的时刻；论文用性能和触发次数共同说明合理区间。</p>
-              </div>
-            </article>
-            </div>
+    <article class="visual-card">
+      <div class="visual-media"><img src="assets/delta_vs_rouge_l.png" alt="Sensitivity of delta"><img src="assets/delta_vs_count.png" alt="Sensitivity of delta"></div>
+      <div class="visual-copy">
+        <p class="eyebrow">figure</p>
+        <h3>Sensitivity of delta</h3>
+        <p class="original">Sensitivity analysis of the trigger threshold delta.</p>
+        <p>阈值 delta 控制 DAT 触发频率。过低会插入太频繁，过高会错过需要视觉证据的时刻；论文用性能和触发次数共同说明合理区间。</p>
+      </div>
+    </article>
+    </div>
       </section>
 
       <section class="band" id="tables">
@@ -533,6 +533,17 @@
                   <div class="section-body">
                 
 
+    <article class="visual-card inline-visual">
+      <div class="visual-media"><img src="assets/022.jpg" alt="Figure 1: attention-based selection vs. information-driven selection"><img src="assets/022_avp.png" alt="Figure 1: attention-based selection vs. information-driven selection"></div>
+      <div class="visual-copy">
+        <p class="eyebrow">figure in context</p>
+        <h3>Figure 1: attention-based selection vs. information-driven selection</h3>
+        <p class="original">A comparison of regions selected by different strategies. Attention-driven regions are scattered, while information-gain selection focuses on task-relevant evidence.</p>
+        <p>这张图展示同一张餐食图片上两种选区策略的差异。注意力 Top-K 更容易分散到局部纹理或背景，AVP 会优先寻找能最大降低模型不确定性的区域，因此更可能靠近答案证据。</p>
+      </div>
+    </article>
+    
+
             <article class="reading-card" id="p017">
               <div class="card-index">#017</div>
               <div class="triple">
@@ -705,6 +716,17 @@
                   <div class="section-body">
                 
 
+    <article class="visual-card inline-visual">
+      <div class="visual-media"><img src="assets/Framework_new.png" alt="Framework overview"></div>
+      <div class="visual-copy">
+        <p class="eyebrow">figure in context</p>
+        <h3>Framework overview</h3>
+        <p class="original">An overview of AIM-CoT. CAG enhances the query, DAT detects when visual evidence is needed, and AVP selects informative regions for insertion.</p>
+        <p>框架图可以按 Trigger-Select-Insert 读：CAG 先让文本查询包含更多视觉语义锚点；生成过程中 DAT 监控文本到视觉的注意力转移；触发后 AVP 通过信息增益逐步选出区域并插入上下文。</p>
+      </div>
+    </article>
+    
+
             <article class="reading-card" id="p025">
               <div class="card-index">#025</div>
               <div class="triple">
@@ -825,8 +847,12 @@
                   <div class="triple">
                     <section>
                       <h4>原文公式</h4>
-                      <div class="math-block">\[\mathcal{D}_{\text{CAG}} &amp;= \text{VLM}(I, x, \mathcal{P}_{\text{CAG}}), \\
-    x&#x27; &amp;= \text{concat}(x, \mathcal{D}_{\text{CAG}}),\]</div>
+                      <div class="math-block">\[
+\begin{aligned}
+\mathcal{D}_{\text{CAG}} &amp;= \text{VLM}(I, x, \mathcal{P}_{\text{CAG}}), \\
+    x&#x27; &amp;= \text{concat}(x, \mathcal{D}_{\text{CAG}}),
+\end{aligned}
+\]</div>
                     </section>
                     <section>
                       <h4>中文说明</h4>
@@ -950,9 +976,13 @@
                   <div class="triple">
                     <section>
                       <h4>原文公式</h4>
-                      <div class="math-block">\[C_{attn} &amp;= \{R_1, R_2, \dots, R_N\},   \\
+                      <div class="math-block">\[
+\begin{aligned}
+C_{attn} &amp;= \{R_1, R_2, \dots, R_N\},   \\
     C_{exp}  &amp;= \{R_{N+1}, R_{N+2}, \dots, R_{N+M}\},  \\
-    C        &amp;= C_{attn} \cup C_{exp},\]</div>
+    C        &amp;= C_{attn} \cup C_{exp},
+\end{aligned}
+\]</div>
                     </section>
                     <section>
                       <h4>中文说明</h4>
@@ -1028,10 +1058,14 @@
                   <div class="triple">
                     <section>
                       <h4>原文公式</h4>
-                      <div class="math-block">\[&amp; U_B = H(Y | I, x, y_{&lt;t})  \\
+                      <div class="math-block">\[
+\begin{aligned}
+&amp; U_B = H(Y | I, x, y_{&lt;t})  \\
         &amp;= -\sum_{y \in V} P(y | I, x, y_{&lt;t}) \log_2 P(y | I, x, y_{&lt;t}), \\
    &amp; U_{C,i} = H(Y | I, x, y_{&lt;t}, R_i)  \\
-            &amp;= -\sum_{y \in V} P(y | I, x, y_{&lt;t}, R_i) \log_2 P(y | I, x, y_{&lt;t}, R_i),\]</div>
+            &amp;= -\sum_{y \in V} P(y | I, x, y_{&lt;t}, R_i) \log_2 P(y | I, x, y_{&lt;t}, R_i),
+\end{aligned}
+\]</div>
                     </section>
                     <section>
                       <h4>中文说明</h4>
@@ -1069,7 +1103,9 @@
                   <div class="triple">
                     <section>
                       <h4>原文公式</h4>
-                      <div class="math-block">\[IG(\{R_i\}) = U_B - U_{C,i}, \; i = 1, \dots, N+M.\]</div>
+                      <div class="math-block">\[
+IG(\{R_i\}) = U_B - U_{C,i}, \; i = 1, \dots, N+M.
+\]</div>
                     </section>
                     <section>
                       <h4>中文说明</h4>
@@ -1184,7 +1220,9 @@
                   <div class="triple">
                     <section>
                       <h4>原文公式</h4>
-                      <div class="math-block">\[\Delta A_{vision}(t) = A_{vision}(t) - A_{vision}(t-1),\]</div>
+                      <div class="math-block">\[
+\Delta A_{vision}(t) = A_{vision}(t) - A_{vision}(t-1),
+\]</div>
                     </section>
                     <section>
                       <h4>中文说明</h4>
@@ -1891,6 +1929,17 @@
                   <div class="section-body">
                 
 
+    <article class="visual-card inline-visual">
+      <div class="visual-media"><img src="assets/prompt_template.png" alt="CAG prompt template"></div>
+      <div class="visual-copy">
+        <p class="eyebrow">figure in context</p>
+        <h3>CAG prompt template</h3>
+        <p class="original">Template and example of context enhancement by CAG.</p>
+        <p>CAG 的提示模板不是为了生成最终答案，而是为了生成与问题相关的细粒度图像描述。这些描述作为语义锚点，帮助后续注意力图更贴近真正证据。</p>
+      </div>
+    </article>
+    
+
             <article class="reading-card" id="p076">
               <div class="card-index">#076</div>
               <div class="triple">
@@ -2501,6 +2550,17 @@
                   <div class="section-body">
                 
 
+    <article class="visual-card inline-visual">
+      <div class="visual-media"><img src="assets/delta_vs_rouge_l.png" alt="Sensitivity of delta"><img src="assets/delta_vs_count.png" alt="Sensitivity of delta"></div>
+      <div class="visual-copy">
+        <p class="eyebrow">figure in context</p>
+        <h3>Sensitivity of delta</h3>
+        <p class="original">Sensitivity analysis of the trigger threshold delta.</p>
+        <p>阈值 delta 控制 DAT 触发频率。过低会插入太频繁，过高会错过需要视觉证据的时刻；论文用性能和触发次数共同说明合理区间。</p>
+      </div>
+    </article>
+    
+
             <article class="reading-card" id="p096">
               <div class="card-index">#096</div>
               <div class="triple">
@@ -2616,6 +2676,17 @@
                   <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
                   <div class="section-body">
                 
+
+    <article class="visual-card inline-visual">
+      <div class="visual-media"><img src="assets/intuitive_example_IG_vs_AS.png" alt="Qualitative case: information gain vs. attention"></div>
+      <div class="visual-copy">
+        <p class="eyebrow">figure in context</p>
+        <h3>Qualitative case: information gain vs. attention</h3>
+        <p class="original">Qualitative comparison on ScienceQA showing AIM-CoT selecting visual variables needed for reasoning.</p>
+        <p>案例图说明 AVP 的选择不是看图像上“显眼”的东西，而是看当前推理步骤最缺什么信息。例如物理题中距离、尺寸等变量比大面积背景更关键。</p>
+      </div>
+    </article>
+    
 
             <article class="reading-card" id="p100">
               <div class="card-index">#100</div>

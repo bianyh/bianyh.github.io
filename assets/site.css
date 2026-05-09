@@ -124,6 +124,16 @@ h3 { font-size: 18px; line-height: 1.32; margin: 0 0 10px; letter-spacing: 0; }
   background: #fff;
 }
 .visual-copy { align-self: center; }
+.inline-visual {
+  margin: 12px 0 16px;
+  box-shadow: none;
+  border-color: rgba(8, 127, 140, 0.28);
+  background: #fbfffd;
+}
+.inline-visual .visual-media img {
+  max-height: 560px;
+  object-fit: contain;
+}
 .eyebrow { margin: 0 0 6px; color: var(--amber); font-size: 12px; font-weight: 850; text-transform: uppercase; }
 .original { color: #4b5964; }
 .toc-panel { padding: 18px; margin-bottom: 18px; }
