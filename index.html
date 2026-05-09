@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daily Paper Reading</title>
+  <meta name="description" content="大模型与多模态大模型论文每日精读。">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav">
+      <a class="brand" href="index.html">Daily Paper Reading</a>
+      <div class="nav-links">
+        <a href="#today">今日论文</a>
+        <a href="#archive">阅读列表</a>
+        <a href="#workflow">流程</a>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div>
+        <p class="kicker">LLM / Multimodal LLM Paper Notes</p>
+        <h1>每天读一篇近期顶会大模型论文</h1>
+        <p class="subtitle">聚焦大模型、多模态大模型、推理、记忆、知识、训练与评测。首页直接进入论文精读，不做额外介绍页。</p>
+      </div>
+      <aside class="meta-panel">
+        <dl class="meta-grid">
+          <div><dt>当前主题</dt><dd>多模态推理</dd></div>
+          <div><dt>选文来源</dt><dd>PaperNotes + arXiv</dd></div>
+          <div><dt>发布形式</dt><dd>逐段原文 / 翻译 / 讲解</dd></div>
+        </dl>
+      </aside>
+    </section>
+    <div class="content">
+      <section class="band" id="today">
+        <div class="section-title"><h2>今日论文</h2></div>
+        <article class="note-card">
+          <p class="eyebrow">2026-05-09</p>
+          <h3><a href="papers/aim-cot/index.html">AIM-CoT: Active Information-driven Multimodal Chain-of-Thought for Vision-Language Reasoning</a></h3>
+          <p>AIM-CoT 将多模态 CoT 中的视觉证据选择从被动注意力 Top-K 推向主动信息增益探查，并用动态注意力转移决定插入时机。</p>
+          <div class="buttons">
+            <a class="button primary" href="papers/aim-cot/index.html">阅读精读页</a>
+            <a class="button" href="papers/aim-cot/2509.25699v3.pdf">下载 PDF</a>
+          </div>
+        </article>
+      </section>
+      <section class="band" id="archive">
+        <div class="section-title"><h2>阅读列表</h2></div>
+        <table class="paper-list">
+          <thead><tr><th>日期</th><th>论文</th><th>方向</th><th>来源</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>2026-05-09</td>
+              <td><a href="papers/aim-cot/index.html">AIM-CoT: Active Information-driven Multimodal Chain-of-Thought for Vision-Language Reasoning</a></td>
+              <td>多模态大模型推理 / 视觉证据选择 / CoT</td>
+              <td><a href="https://papernotes.org/ICLR2026/llm_reasoning/aimcot_active_information-driven_multimodal_chain-of-thought_for_vision-language/">PaperNotes</a> / <a href="https://arxiv.org/abs/2509.25699">arXiv</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section class="band" id="workflow">
+        <div class="section-title"><h2>固定流程</h2></div>
+        <div class="grid">
+          <article class="note-card"><h3>1. 选文</h3><p>从 PaperNotes 近一年顶会条目中筛选 LLM、VLM、推理、记忆、知识、训练相关论文，并核对 arXiv 时间与许可。</p></article>
+          <article class="note-card"><h3>2. 精读</h3><p>下载 PDF/source，抽取段落和图表，生成英文原文、中文翻译、逐段解释和关键结果导读。</p></article>
+          <article class="note-card"><h3>3. 发布</h3><p>加入 GitHub Pages 静态站点，更新首页列表，完成本地检查后推送到 GitHub 仓库。</p></article>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer class="footer">
+    <p>Built as a static GitHub Pages reading notebook.</p>
+  </footer>
+</body>
+</html>

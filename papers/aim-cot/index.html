@@ -1,0 +1,3217 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AIM-CoT 论文逐段精读 | Daily Paper Reading</title>
+  <meta name="description" content="AIM-CoT 论文逐段原文、中文翻译与详细讲解。">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script>
+    MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, svg: { fontCache: 'global' } };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav">
+      <a class="brand" href="../../index.html">Daily Paper Reading</a>
+      <div class="nav-links">
+        <a href="#why">选文理由</a>
+        <a href="#map">论文导读</a>
+        <a href="#figures">图表速读</a>
+        <a href="#reading">逐段精读</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="kicker">2026-05-09 精读论文</p>
+        <h1>AIM-CoT: Active Information-driven Multimodal Chain-of-Thought for Vision-Language Reasoning</h1>
+        <p class="subtitle">围绕多模态大模型推理中的“看什么”和“什么时候看”，AIM-CoT 用上下文增强、主动视觉探查和动态注意力转移触发，改造交错模态思维链。</p>
+      </div>
+      <aside class="meta-panel">
+        <dl class="meta-grid">
+          <div><dt>作者</dt><dd>Xiping Li, Jianghong Ma</dd></div>
+          <div><dt>来源</dt><dd>ICLR 2026 / ACL 2026 listing on PaperNotes</dd></div>
+          <div><dt>arXiv</dt><dd>2509.25699</dd></div>
+          <div><dt>许可</dt><dd>CC BY 4.0</dd></div>
+        </dl>
+        <div class="buttons">
+          <a class="button primary" href="2509.25699v3.pdf">PDF</a>
+          <a class="button" href="https://arxiv.org/abs/2509.25699">arXiv</a>
+          <a class="button" href="https://papernotes.org/ICLR2026/llm_reasoning/aimcot_active_information-driven_multimodal_chain-of-thought_for_vision-language/">PaperNotes</a>
+        </div>
+      </aside>
+    </section>
+
+    <div class="content">
+      <section class="band" id="why">
+        <div class="section-title"><h2>选文理由</h2></div>
+        <div class="grid">
+          <article class="note-card"><h3>方向匹配</h3><p>论文关注 VLM / 多模态大模型的推理链、视觉证据选择、动态触发和免训练推理增强，与你关注的大模型、多模态、推理和知识使用方向高度一致。</p></article>
+          <article class="note-card"><h3>时间窗口</h3><p>arXiv 记录显示论文 2025-09-30 首次提交，2026-04-19 更新 v3；按 2026-05-09 计算属于近一年论文。</p></article>
+          <article class="note-card"><h3>可复用性</h3><p>AIM-CoT 不要求重新训练骨干模型，更像一个推理时框架。它适合作为阅读起点，也适合后续思考如何把主动信息获取引入 LLM Agent 或多模态 RAG。</p></article>
+        </div>
+      </section>
+
+      <section class="band" id="map">
+        <div class="section-title"><h2>论文导读</h2></div>
+        <div class="grid">
+          <article class="note-card"><h3>问题</h3><p>I-MCoT 需要决定两件事：当前推理步骤应该看哪块图像区域，以及何时把该区域插入上下文。旧方法常用高注意力区域和换行符等静态触发，容易错过真正证据。</p></article>
+          <article class="note-card"><h3>方法</h3><p>CAG 先生成问题相关的细粒度图像描述以增强文本上下文；DAT 在注意力从文本转向视觉时触发；AVP 用信息增益逐步选择最能降低不确定性的区域。</p></article>
+          <article class="note-card"><h3>结论</h3><p>实验显示 AIM-CoT 在多个 VQA 基准和骨干模型上稳定优于基线。更重要的是，语义命中率和 GPT-4v 盲评表明它选出的视觉证据更完整、更相关。</p></article>
+        </div>
+      </section>
+
+      <section class="band" id="figures">
+        <div class="section-title"><h2>图表速读</h2></div>
+        <div class="visual-list">
+            <article class="visual-card">
+              <div class="visual-media"><img src="assets/022.jpg" alt="Figure 1: attention-based selection vs. information-driven selection"><img src="assets/022_avp.png" alt="Figure 1: attention-based selection vs. information-driven selection"></div>
+              <div class="visual-copy">
+                <p class="eyebrow">figure</p>
+                <h3>Figure 1: attention-based selection vs. information-driven selection</h3>
+                <p class="original">A comparison of regions selected by different strategies. Attention-driven regions are scattered, while information-gain selection focuses on task-relevant evidence.</p>
+                <p>这张图展示同一张餐食图片上两种选区策略的差异。注意力 Top-K 更容易分散到局部纹理或背景，AVP 会优先寻找能最大降低模型不确定性的区域，因此更可能靠近答案证据。</p>
+              </div>
+            </article>
+            
+
+            <article class="visual-card">
+              <div class="visual-media"><img src="assets/Framework_new.png" alt="Framework overview"></div>
+              <div class="visual-copy">
+                <p class="eyebrow">figure</p>
+                <h3>Framework overview</h3>
+                <p class="original">An overview of AIM-CoT. CAG enhances the query, DAT detects when visual evidence is needed, and AVP selects informative regions for insertion.</p>
+                <p>框架图可以按 Trigger-Select-Insert 读：CAG 先让文本查询包含更多视觉语义锚点；生成过程中 DAT 监控文本到视觉的注意力转移；触发后 AVP 通过信息增益逐步选出区域并插入上下文。</p>
+              </div>
+            </article>
+            
+
+            <article class="visual-card">
+              <div class="visual-media"><img src="assets/prompt_template.png" alt="CAG prompt template"></div>
+              <div class="visual-copy">
+                <p class="eyebrow">figure</p>
+                <h3>CAG prompt template</h3>
+                <p class="original">Template and example of context enhancement by CAG.</p>
+                <p>CAG 的提示模板不是为了生成最终答案，而是为了生成与问题相关的细粒度图像描述。这些描述作为语义锚点，帮助后续注意力图更贴近真正证据。</p>
+              </div>
+            </article>
+            
+
+            <article class="visual-card">
+              <div class="visual-media"><img src="assets/intuitive_example_IG_vs_AS.png" alt="Qualitative case: information gain vs. attention"></div>
+              <div class="visual-copy">
+                <p class="eyebrow">figure</p>
+                <h3>Qualitative case: information gain vs. attention</h3>
+                <p class="original">Qualitative comparison on ScienceQA showing AIM-CoT selecting visual variables needed for reasoning.</p>
+                <p>案例图说明 AVP 的选择不是看图像上“显眼”的东西，而是看当前推理步骤最缺什么信息。例如物理题中距离、尺寸等变量比大面积背景更关键。</p>
+              </div>
+            </article>
+            
+
+            <article class="visual-card">
+              <div class="visual-media"><img src="assets/delta_vs_rouge_l.png" alt="Sensitivity of delta"><img src="assets/delta_vs_count.png" alt="Sensitivity of delta"></div>
+              <div class="visual-copy">
+                <p class="eyebrow">figure</p>
+                <h3>Sensitivity of delta</h3>
+                <p class="original">Sensitivity analysis of the trigger threshold delta.</p>
+                <p>阈值 delta 控制 DAT 触发频率。过低会插入太频繁，过高会错过需要视觉证据的时刻；论文用性能和触发次数共同说明合理区间。</p>
+              </div>
+            </article>
+            </div>
+      </section>
+
+      <section class="band" id="tables">
+        <div class="section-title"><h2>关键结果</h2></div>
+        <div class="grid">
+        <article class="note-card">
+          <h3>主结果：AIM-CoT 在三个 VQA 基准、四个骨干上稳定领先</h3>
+          <p>论文报告 M3CoT、ScienceQA 使用 Accuracy，LLaVA-W 使用 ROUGE-L。作者强调 AIM-CoT 在 Chameleon-7B、Janus-Pro-7B、Qwen2-VL-7B、Qwen2.5-VL-32B 上均优于 No-CoT、DDCoT、MMCoT、CCoT、SCAFFOLD、ICoT 等基线。</p>
+          <p class="explain-line">这说明 AIM-CoT 的收益不是某一个模型的偶然适配，而是对多模态推理流程中“证据选择和触发时机”的通用改造。</p>
+        </article>
+        
+
+        <article class="note-card">
+          <h3>消融：CAG、AVP、DAT 都有贡献</h3>
+          <p>主文消融在 Chameleon-7B 0-shot 设置下进行。移除任一模块都会损失性能，完整 AIM-CoT 在 M3CoT、ScienceQA、LLaVA-W 上都取得最高结果。</p>
+          <p class="explain-line">CAG 解决文本-视觉粒度不平衡，AVP 负责选择信息量最大的区域，DAT 负责动态触发。三者不是简单叠加，而是构成前后依赖的流程。</p>
+        </article>
+        
+
+        <article class="note-card">
+          <h3>语义命中率 SHR：AIM-CoT 更接近任务相关对象</h3>
+          <p>论文使用 SAM 生成与问题和答案相关实体的分割掩码，并用 IoU&gt;0.5 判断选区是否命中语义对象。ICoT 在 M3CoT、ScienceQA 上分别约为 18.7% 和 24.3%，AIM-CoT 达到约 65.2% 和 71.8%。</p>
+          <p class="explain-line">这组结果直接支持“信息增益选区比注意力 Top-K 更像人类需要的证据”。它比单纯最终准确率更能解释方法为什么有效。</p>
+        </article>
+        
+
+        <article class="note-card">
+          <h3>GPT-4v 盲评：AIM-CoT 选区更符合人类直觉</h3>
+          <p>在 M3CoT 和 LLaVA-W 的 500 个样本上，GPT-4v 盲评 AIM-CoT 的选区优于 ICoT 的比例分别约为 76.4% 和 81.2%。</p>
+          <p class="explain-line">盲评从相关性、完整性、帮助性三方面评估区域质量。虽然评委模型不是人类标注，但结果与 SHR 一起增强了证据选择质量的可信度。</p>
+        </article>
+        
+
+        <article class="note-card">
+          <h3>部署：AVP 有额外开销，但候选规模较小</h3>
+          <p>复杂度主项与 K、候选数 N_C、层数 L、插入区域 token 长度和上下文长度相关。作者认为通过小 K、小候选集、批处理和 KV cache，平均推理时间仍在可部署范围。</p>
+          <p class="explain-line">这里的现实意义是：AIM-CoT 不是免费提升。它用额外前向计算换更可靠证据，需要根据任务价值和延迟预算决定是否启用。</p>
+        </article>
+        </div>
+      </section>
+
+      <section class="band" id="reading">
+        <div class="section-title"><h2>逐段精读</h2></div>
+        <aside class="toc-panel">
+          <strong>目录</strong>
+          <ul><li><a href="#abstract">Abstract</a></li><li><a href="#introduction">Introduction</a></li><li><a href="#related-work">Related Work</a></li><li><a href="#motivation">Motivation</a></li><li><a href="#moving-beyond-attention-maps-the-reliability-gap-in-passive-visual-selection">Moving Beyond Attention Maps: The Reliability Gap in Passive Visual Selection</a></li><li><a href="#identifying-what-to-see-from-semantic-alignment-to-information-gain">Identifying What to See: From Semantic Alignment to Information Gain</a></li><li><a href="#identifying-when-to-see-from-static-heuristics-to-dynamic-attention-shifts">Identifying When to See: From Static Heuristics to Dynamic Attention Shifts</a></li><li><a href="#aim-cot">AIM-CoT</a></li><li><a href="#preliminaries">Preliminaries</a></li><li><a href="#context-enhanced-attention-map-generation-cag">Context-enhanced Attention-map Generation (CAG)</a></li><li><a href="#active-visual-probing-avp">Active Visual Probing (AVP)</a></li><li><a href="#dynamic-attention-shift-trigger-dat">Dynamic Attention-shift Trigger (DAT)</a></li><li><a href="#experiments">Experiments</a></li><li><a href="#evaluation-setup">Evaluation Setup</a></li><li><a href="#performance-comparison">Performance Comparison</a></li><li><a href="#ablation-study">Ablation Study</a></li><li><a href="#interplay-between-cag-and-avp">Interplay between CAG and AVP</a></li><li><a href="#quantitative-analysis-semantic-relevance">Quantitative Analysis: Semantic Relevance</a></li><li><a href="#quantitative-analysis-alignment-with-human-intuition">Quantitative Analysis: Alignment with Human Intuition</a></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#acknowledgements">Acknowledgements</a></li><li><a href="#references">References</a></li><li><a href="#experimental-setup-and-reproducibility">Experimental Setup and Reproducibility</a></li><li><a href="#benchmarks">Benchmarks</a></li><li><a href="#baselines">Baselines</a></li><li><a href="#template-of-cag">Template of 𝒫_CAG</a></li><li><a href="#setting-of-hyper-parameters">Setting of Hyper-parameters</a></li><li><a href="#supplementary-important-definitions">Supplementary Important Definitions</a></li><li><a href="#supplementary-details-regarding-motivation-in-section-motivation-for-idea-1">Supplementary Details Regarding Motivation in Section  motivation for idea 1</a></li><li><a href="#experiment-for-sufficiency-check">Experiment for Sufficiency Check</a></li><li><a href="#experiment-for-text-vision-granularity-imbalance-in-necessity-check">Experiment for Text-vision Granularity Imbalance in Necessity Check</a></li><li><a href="#explanation-for-figures">Explanation for Figures</a></li><li><a href="#explanation-for-figure-22nd-example-motivation-2">Explanation for Figure  22nd example - motivation 2</a></li><li><a href="#quick-guide-to-framework-overview">Quick Guide to Framework Overview</a></li><li><a href="#statistical-significance-testing">Statistical Significance Testing</a></li><li><a href="#validation-of-motivation-in-section-motivation-for-idea-3-attention-shifts-as-dynamic-triggers">Validation of Motivation in Section  motivation for idea 3: Attention Shifts as Dynamic Triggers</a></li><li><a href="#hyper-parameter-sensitivity-analysis">Hyper-parameter Sensitivity Analysis</a></li><li><a href="#analysis-of-sensitivity-and-adaptivity">Analysis of δ: Sensitivity and Adaptivity</a></li><li><a href="#sensitivity-analysis-of-k-n-c">Sensitivity Analysis of K, N_C</a></li><li><a href="#qualitative-case-study-information-gain-vs-attention">Qualitative Case Study: Information Gain vs. Attention</a></li><li><a href="#comprehensive-analysis-of-avp-component">Comprehensive Analysis of AVP Component</a></li><li><a href="#construction-of-candidate-set-c-method-comparison">Construction of Candidate Set C: Method Comparison</a></li><li><a href="#source-distribution-analysis-quantifying-contribution-of-exploratory-set-c-exp">Source Distribution Analysis: Quantifying Contribution of Exploratory Set C_exp</a></li><li><a href="#robustness-of-avp-against-attention-noise">Robustness of AVP Against Attention Noise</a></li><li><a href="#theoretical-justification-approximate-submodularity-and-optimality-of-greedy-selection">Theoretical Justification: Approximate Submodularity and Optimality of Greedy Selection</a></li><li><a href="#extensive-ablation-studies-on-more-backbones">Extensive Ablation Studies on More Backbones</a></li><li><a href="#in-depth-analysis-of-performance-gain-variations-across-backbones">In-depth Analysis of Performance Gain Variations Across Backbones</a></li><li><a href="#cross-family-analysis-architecture-and-visual-encoding">Cross-Family Analysis: Architecture and Visual Encoding</a></li><li><a href="#intra-family-analysis-capability-dependence-and-scaling-laws">Intra-Family Analysis: Capability Dependence and Scaling Laws</a></li><li><a href="#safety-mechanisms-in-aim-cot">Safety Mechanisms in AIM-CoT</a></li><li><a href="#effectiveness-of-negative-constraints-in-cag-generation">Effectiveness of Negative Constraints in CAG Generation</a></li><li><a href="#effectiveness-of-safety-instructions-in-dat-integration">Effectiveness of Safety Instructions in DAT Integration</a></li><li><a href="#deployment-of-aim-cot">Deployment of AIM-CoT</a></li><li><a href="#analysis-of-the-complexity-of-avp-module">Analysis of the Complexity of AVP Module</a></li><li><a href="#empirical-analysis-of-the-deployment-of-aim-cot">Empirical Analysis of the Deployment of AIM-CoT</a></li></ul>
+        </aside>
+        
+                <details class="paper-section" open id="abstract">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Abstract</span>
+                  </summary>
+                  <p class="section-intro">摘要先把论文的核心矛盾讲清楚：交错模态 CoT 的效果取决于选什么视觉证据、什么时候插入视觉证据。AIM-CoT 用 CAG、AVP、DAT 分别处理注意力可靠性、信息量选择和动态触发。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p001">
+              <div class="card-index">#001</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Interleaved-Modal Chain-of-Thought (I-MCoT) advances vision-language reasoning, such as Visual Question Answering (VQA). This paradigm integrates specially selected visual evidence from the input image into the context of Vision-Language Models (VLMs), enabling them to ground their reasoning logic in these details. Accordingly, the efficacy of an I-MCoT framework relies on identifying what to see (evidence selection) and when to see it (triggering of insertions). However, existing methods fall short in both aspects. First, for selection, they rely on attention signals, which are unreliable—particularly under severe granularity imbalance between the brief textual query and the informative image. Second, for triggering, they adopt static triggers, which fail to capture the VLMs&#x27; dynamic needs for visual evidence. To this end, we propose a novel I-MCoT framework, Active Information-driven Multi-modal Chain-of-Thought (AIM-CoT), which aims to improve both evidence selection and insertion triggering via: (1) Context-enhanced Attention-map Generation (CAG) to mitigate granularity imbalance via textual context enhancement; (2) Active Visual Probing (AVP) to proactively select the most informative evidence via an information foraging process; and (3) Dynamic Attention-shift Trigger (DAT) to precisely activate insertions when VLM&#x27;s attention shifts from text to visual context. Experiments across three benchmarks and four backbones demonstrate AIM-CoT&#x27;s consistent superiority. Our code is available at &lt;https://anonymous.4open.science/r/AIMCoT&gt;.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>交错模态思维链 (I-MCoT) 促进视觉-语言推理，例如视觉问答 (VQA)。该范例将从输入图像中专门选择的视觉证据集成到视觉-语言模型（VLM）的上下文中，使它们能够将推理逻辑建立在这些细节的基础上。因此，I-MCoT 框架的功效依赖于确定要​​查看什么（证据选择）以及何时查看（触发插入）。然而，现有方法在这两方面都存在不足。首先，对于选择，它们依赖于注意力信号，这是不可靠的——特别是在简短文本查询和信息图像之间严重的粒度不平衡的情况下。其次，在触发方面，他们采用静态触发，无法捕捉VLM对视觉证据的动态需求。为此，我们提出了一种新颖的 I-MCoT 框架，即主动信息驱动的多模态思维链（AIM-CoT），其旨在通过以下方式改善证据选择和插入触发：（1）上下文增强的注意力图生成（CAG），通过文本上下文增强来减轻粒度不平衡； （2）主动视觉探查（AVP），通过信息觅食过程主动选择信息最丰富的证据； (3) 动态注意力转移触发器 (DAT)，当 VLM 的注意力从文本转移到视觉上下文时精确激活插入。跨三个基准和四个骨干网的实验证明了 AIM-CoT 一贯的优越性。我们的代码可在 &lt;https://anonymous.4open.science/r/AIMCoT&gt; 获取。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段抓住了 I-MCoT 的两个核心控制变量：选择哪块视觉证据，以及在生成过程中的哪个时刻插入。后文的三个模块都围绕这两个变量展开。</li><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="introduction">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Introduction</span>
+                  </summary>
+                  <p class="section-intro">引言从 CoT 在 LLM/VLM 中的迁移讲起，再指出 I-MCoT 的两个关键决策：where/what 与 when。阅读时要关注作者如何把已有 ICoT 的启发式机制拆成两个可验证问题。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p002">
+              <div class="card-index">#002</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Chain-of-Thought (CoT) prompting, initially established for Large Language Models (LLMs) , has been naturally adapted to Vision-Language Models (VLMs) , empowering them to tackle vision-related tasks via a series of intermediate reasoning steps. Visual Question Answering (VQA) serves as a representative scenario targeted in this study. In a typical VQA scenario, the VLM is presented with a multimodal question comprising a textual query and an associated image, and is then prompted to answer the question.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>思维链 (CoT) 提示最初是为大型语言模型 (LLM) 建立的，现已自然地适应视觉-语言模型 (VLM)，使它们能够通过一系列中间推理步骤来处理与视觉相关的任务。视觉问答（VQA）是本研究的代表性场景。在典型的 VQA 场景中，VLM 会收到一个包含文本查询和相关图像的多模态问题，然后提示回答该问题。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>引言从 CoT 在 LLM/VLM 中的迁移讲起，再指出 I-MCoT 的两个关键决策：where/what 与 when。阅读时要关注作者如何把已有 ICoT 的启发式机制拆成两个可验证问题。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p003">
+              <div class="card-index">#003</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Early efforts in this domain focused on generating text-only CoT. A pivotal advancement is the paradigm of Interleaved-Modal Chain-of-Thought (I-MCoT) . Unlike text-only methods, this paradigm aims to provide fine-grained visual evidence for model reasoning. Specifically, it first selects the salient sub-regions from the input image, and then inserts them as visual tokens into the context of reasoning chain.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>该领域的早期工作集中于生成纯文本 CoT。一个关键的进步是交错模态思维链（I-MCoT）的范式。与纯文本方法不同，该范例旨在为模型推理提供细粒度的视觉证据。具体来说，它首先从输入图像中选择显著的子区域，然后将它们作为视觉标记插入到推理链的上下文中。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>引言从 CoT 在 LLM/VLM 中的迁移讲起，再指出 I-MCoT 的两个关键决策：where/what 与 when。阅读时要关注作者如何把已有 ICoT 的启发式机制拆成两个可验证问题。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p004">
+              <div class="card-index">#004</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>However, to construct an effective I-MCoT framework, two critical questions should be well addressed: (1) What to see? (Selection: identifying the specific image regions that support the current reasoning step) and (2) When to see it? (Triggering: determining the precise moment visual insertion is needed).</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>然而，要构建有效的I-MCoT框架，需要很好地解决两个关键问题：（1）看什么？ （选择：识别支持当前推理步骤的特定图像区域）和（2）什么时候看到它？ （触发：确定需要视觉插入的精确时刻）。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段抓住了 I-MCoT 的两个核心控制变量：选择哪块视觉证据，以及在生成过程中的哪个时刻插入。后文的三个模块都围绕这两个变量展开。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p005">
+              <div class="card-index">#005</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Existing research falls short in these two aspects due to its reliance on passive and static heuristics. Regarding selection, it adopts attention-based selection, which relies on the quality of cross-attention maps of VLM layers. Specifically, the visual regions that receive the most attention from tokens in the text context are selected, assumed to be most helpful for the subsequent generation. However, as revealed in Section  motivation for idea 1, the raw VLM attention fails to accurately identify the salient regions, particularly when there is a granularity imbalance. Specifically, in the input context, the rich details in the image overwhelm the brief textual query. Therefore, with limited semantic anchors, the query cannot effectively steer the cross-attention towards the crucial visual regions. Regarding triggering, prior works often insert visual information at fixed, predefined moments (e.g., upon generating a newline character ). As analyzed in Section  motivation for idea 3, such a static mechanism fails to align with the model&#x27;s dynamic cognitive need for fine-grained visual information.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>现有研究由于依赖被动和静态启发法而在这两方面存在不足。在选择方面，它采用基于注意力的选择，依赖于VLM层交叉注意力图的质量。具体来说，选择文本上下文中最受标记关注的视觉区域，假定对后续生成最有帮助。然而，正如想法 1 的动机部分所揭示的那样，原始 VLM 注意力无法准确识别显著区域，特别是当存在粒度不平衡时。具体来说，在输入上下文中，图像中丰富的细节压倒了简短的文本查询。因此，由于语义锚点有限，查询无法有效地将交叉注意力引导到关键的视觉区域。关于触发，先前的工作通常在固定的、预定义的时刻插入视觉信息（例如，在生成换行符时）。正如想法 3 的动机部分所分析的那样，这种静态机制无法满足模型对细粒度视觉信息的动态认知需求。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段抓住了 I-MCoT 的两个核心控制变量：选择哪块视觉证据，以及在生成过程中的哪个时刻插入。后文的三个模块都围绕这两个变量展开。</li><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p006">
+              <div class="card-index">#006</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>To overcome these limitations, we propose a novel I-MCoT framework, Active Information-driven Multi-modal Chain-of-Thought (AIM-CoT), which aims to address both what to see and when to see it by shifting VLM reasoning from passive, static perception to active, dynamic exploration. Grounded in Information Foraging Theory , AIM-CoT detects the VLM&#x27;s momentary need for visual cues and proactively forages for the most informative evidence. Integrated into the context window, this evidence improves subsequent generation. AIM-CoT realizes this shift through three synergistic components: (1) Context-enhanced Attention-map Generation (CAG): To refine the VLM&#x27;s cross-modal attention distribution, CAG elicits a query-conditioned description of the image and appends it to the textual context. Rather than serving as an auxiliary caption, CAG provides semantic anchors that align textual and visual granularities. (2) Active Visual Probing (AVP): To address the &quot;What to see&quot; problem, AVP quantifies the information gain of candidate regions, integrating those that provide the highest utility into the context for subsequent reasoning and generation. (3) Dynamic Attention-shift Trigger (DAT): To address the &quot;When to see it&quot; problem, DAT dynamically and precisely triggers visual insertion when a significant shift from textual to visual focus is detected, indicating the VLM&#x27;s cognitive demand for visual evidence.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>为了克服这些限制，我们提出了一种新颖的 I-MCoT 框架，即主动信息驱动的多模态思维链 (AIM-CoT)，其旨在通过将 VLM 推理从被动、静态感知转变为主动、动态探索来解决看到什么和何时看到的问题。基于信息觅食理论，AIM-CoT 可以检测 VLM 对视觉提示的瞬时需求，并主动搜寻信息最丰富的证据。该证据集成到上下文窗口中，改善了后续生成。 AIM-CoT 通过三个协同组件实现这种转变：（1）上下文增强注意力图生成（CAG）：为了细化 VLM 的跨模式注意力分布，CAG 引出图像的查询条件描述并将其附加到文本上下文。 CAG 不是充当辅助描述，而是提供对齐文本和视觉粒度的语义锚点。 （2）主动视觉探查（AVP）：为了解决“看什么”问题，AVP量化候选区域的信息增益，将那些提供最高效用的区域整合到上下文中以供后续推理和生成。（3）动态注意力转移触发器（DAT）：为了解决“何时看到”问题，当检测到从文本焦点到视觉焦点的显著转移时，DAT动态且精确地触发视觉插入，表明VLM对视觉证据的认知需求。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段抓住了 I-MCoT 的两个核心控制变量：选择哪块视觉证据，以及在生成过程中的哪个时刻插入。后文的三个模块都围绕这两个变量展开。</li><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>这里的信息增益可以理解为“看了这个区域后，模型对下一步预测少了多少不确定性”。这比单纯选高注意力区域更贴近推理任务需要。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p007">
+              <div class="card-index">#007</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Our contributions are summarized as follows: We introduce AIM-CoT, a unified system (CAG, AVP, DAT) that enables VLMs to proactively forage for informative visual evidence and dynamically capture the critical triggering moments. Our analyses demonstrate that AIM-CoT (1) selects truly salient visual evidence via information gain, (2) withstands noisy attention and descriptions, and (3) remains deployment-friendly. Experiments conducted on four backbones across three VQA benchmarks demonstrate the consistently superior performance of AIM-CoT over state-of-the-art baselines.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>我们的贡献总结如下：我们引入了 AIM-CoT，这是一个统一的系统（CAG、AVP、DAT），使 VLM 能够主动寻找信息丰富的视觉证据并动态捕获关键触发时刻。我们的分析表明，AIM-CoT (1) 通过信息增益选择真正显著的视觉证据，(2) 承受嘈杂的关注和描述，(3) 保持部署友好。在三个 VQA 基准的四个主干上进行的实验表明，AIM-CoT 始终优于最先进的基准。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>这里的信息增益可以理解为“看了这个区域后，模型对下一步预测少了多少不确定性”。这比单纯选高注意力区域更贴近推理任务需要。</li><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="related-work">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Related Work</span>
+                  </summary>
+                  <p class="section-intro">相关工作强调 AIM-CoT 不是重新训练 VLM，而是在既有 I-MCoT 范式上替换视觉选择和触发机制。它和文本 CoT、场景图 CoT、网格提示等方法的边界主要在“视觉证据直接进入推理链”。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p008">
+              <div class="card-index">#008</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Multimodal CoT has been widely adopted in VLM research. Early text-only efforts enhance reasoning by decomposing questions , generating intermediate scene graphs , or overlaying coordinate grids for spatial referencing .</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>多模态 CoT 已广泛应用于 VLM 研究中。早期的纯文本工作通过分解问题、生成中间场景图或叠加空间参考坐标网格来增强推理。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>相关工作强调 AIM-CoT 不是重新训练 VLM，而是在既有 I-MCoT 范式上替换视觉选择和触发机制。它和文本 CoT、场景图 CoT、网格提示等方法的边界主要在“视觉证据直接进入推理链”。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p009">
+              <div class="card-index">#009</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>A pivotal advancement is the I-MCoT paradigm, which integrates visual evidence directly into reasoning chains to improve subsequent reasoning/generation. The leading approach, ICoT , selects the visual patches receiving the highest attention scores from the text tokens in the context. Then, this visual evidence is integrated when the VLM outputs a newline token.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>一个关键的进步是 I-MCoT 范式，它将视觉证据直接集成到推理链中，以改进后续的推理/生成。领先的方法 ICoT 从上下文中的文本标记中选择获得最高注意力分数的视觉块。然后，当 VLM 输出换行标记时，会集成该视觉证据。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p010">
+              <div class="card-index">#010</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>However, our analysis in Section  motivations highlights the limitations of existing research. Therefore, while we adopt the established I-MCoT paradigm (similar to ICoT ), our contributions lie in shifting from the passive selection and static trigger to the proactive information-foraging selection and dynamic attention-shifting trigger.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>然而，我们在动机部分的分析凸显了现有研究的局限性。因此，当我们采用已建立的I-MCoT范式（类似于ICoT）时，我们的贡献在于从被动选择和静态触发转向主动信息觅食选择和动态注意力转移触发。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段抓住了 I-MCoT 的两个核心控制变量：选择哪块视觉证据，以及在生成过程中的哪个时刻插入。后文的三个模块都围绕这两个变量展开。</li><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="motivation">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Motivation</span>
+                  </summary>
+                  <p class="section-intro">动机部分是整篇论文的逻辑支柱。作者不是直接提出模块，而是先做三步论证：注意力不适合直接选证据、信息增益更适合作为证据价值、注意力转移适合作为触发信号。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p011">
+              <div class="card-index">#011</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>We focus on two pivotal questions for I-MCoT: What and When to see. First, we expose the limitations of passive attention-based selection in Section  motivation for idea 1. To bridge this, we explore an active paradigm shift, investigating the potential of information gain for selection (Section  motivation for idea 2) and dynamic attention shifts for triggering (Section  motivation for idea 3).</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>我们重点关注 I-MCoT 的两个关键问题：看什么和何时看。首先，我们在想法 1 的部分动机中揭示了基于被动注意的选择的局限性。为了弥补这一点，我们探索了主动范式转变，研究了选择信息增益的潜力（想法 2 的部分动机）和触发的动态注意转移（想法 3 的部分动机）。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段抓住了 I-MCoT 的两个核心控制变量：选择哪块视觉证据，以及在生成过程中的哪个时刻插入。后文的三个模块都围绕这两个变量展开。</li><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>这里的信息增益可以理解为“看了这个区域后，模型对下一步预测少了多少不确定性”。这比单纯选高注意力区域更贴近推理任务需要。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="moving-beyond-attention-maps-the-reliability-gap-in-passive-visual-selection">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Moving Beyond Attention Maps: The Reliability Gap in Passive Visual Selection</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p012">
+              <div class="card-index">#012</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Existing I-MCoT methods adopt attention-based visual selection. We examine the reliability of attention for visual selection by asking: 2. Sufficiency: Do highly attended patches always benefit question answering? 3. Necessity: Do truly crucial patches always receive high attention?</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>现有的 I-MCoT 方法采用基于注意力的视觉选择。我们通过以下问题来检查视觉选择注意力的可靠性： 2. 充分性：高度关注的补丁总是有利于问题回答吗？ 3. 必要性：真正关键的补丁是否总是受到高度关注？</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p013">
+              <div class="card-index">#013</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>To investigate these two questions, we randomly sample 500 instances from M3CoT and 500 from ScienceQA, respectively.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>为了研究这两个问题，我们分别从 M3CoT 和 ScienceQA 中随机抽取了 500 个实例和 500 个实例。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p014">
+              <div class="card-index">#014</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Regarding sufficiency, we mask the top-K_mask most attended regions and evaluate the performance drop. Notably, the masking is only for evaluating the importance of these regions as visual evidence, not for AIM-CoT itself. As shown in Table  performance degradation when masked (Appendix supplementary for sufficiency check in motivation 1), masking highly attended regions leads to only minor degradation. Although information redundancy may explain this, our upcoming necessity check suggests that attention peaks rarely coincide with truly salient regions, failing to be sufficient signals for evidence selection.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>关于充分性，我们屏蔽了 top-K_mask 最常出现的区域并评估性能下降。值得注意的是，掩蔽仅用于评估这些区域作为视觉证据的重要性，而不是用于 AIM-CoT 本身。如表中所示，屏蔽时性能下降（动机 1 中充分性检查的附录补充），屏蔽高度关注的区域只会导致轻微的下降。尽管信息冗余可以解释这一点，但我们即将进行的必要性检查表明，注意力峰值很少与真正显著的区域重合，无法成为证据选择的充分信号。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li><li>这段属于实证支撑。阅读时要分清最终性能、区域质量分析、消融实验三类证据，它们分别回答“有没有提升”“为什么提升”“哪个模块有效”。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p015">
+              <div class="card-index">#015</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Regarding necessity, we examine how well the most attended regions R_attn cover the truly crucial regions R_true in Section app:semantic_relevance, which is quantified by Intersection over Union (IoU). Across 1,000 instances, over 75% have an IoU even below 50%. This shows that attention peaks rarely align with truly critical visual evidence, i.e., crucial regions do not necessarily emerge as the most attended ones. Moreover, Appendix supplementary for granularity imbalance in necessity check in motivation 1 suggests that alleviating the text-vision granularity imbalance is an effective way to improve this alignment.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>关于必要性，我们检查了 app:semantic_relevance 部分中最常参与的区域 R_attn 覆盖真正关键区域 R_true 的情况，该区域通过并交交集 (IoU) 进行量化。在 1,000 个实例中，超过 75% 的 IoU 甚至低于 50%。这表明注意力峰值很少与真正关键的视觉证据一致，即关键区域不一定是最受关注的区域。此外，动机1中必要性检查中粒度不平衡的附录补充表明，减轻文本-视觉粒度不平衡是改善这种对齐的有效方法。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p016">
+              <div class="card-index">#016</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>In conclusion, attention alone is unreliable for evidence selection. Therefore, we do not treat attention as a selection rule. However, improving attention distribution remains crucial, as it (1) underlies autoregressive generation in VLMs and (2) provides candidate regions for subsequent information-driven selection. Accordingly, we introduce CAG, which assists VLMs to attend to critical visual content precisely by enriching brief textual queries with semantic anchors (Section  method 1).</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>总之，仅靠注意力对于证据选择来说是不可靠的。因此，我们不将注意力视为选择规则。然而，改善注意力分布仍然至关重要，因为它（1）是 VLM 中自回归生成的基础，（2）为后续信息驱动选择提供候选区域。因此，我们引入了 CAG，它通过使用语义锚点丰富简短的文本查询来帮助 VLM 精确地关注关键视觉内容（第 1 节方法）。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="identifying-what-to-see-from-semantic-alignment-to-information-gain">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Identifying What to See: From Semantic Alignment to Information Gain</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p017">
+              <div class="card-index">#017</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>The empirical limitations observed in Section  motivation for idea 1 can be attributed to a fundamental misalignment: cross-attention maps primarily capture the semantic correlations among tokens, whereas the ultimate goal of the selection phase in I-MCoT is to identify visual evidence that provides rich visual information for subsequent reasoning and generation.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>在想法 1 的动机部分中观察到的经验局限性可归因于根本性的错位：交叉注意力图主要捕获标记之间的语义相关性，而 I-MCoT 中选择阶段的最终目标是识别视觉证据，为后续推理和生成提供丰富的视觉信息。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p018">
+              <div class="card-index">#018</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>This insight motivates a shift from attention-based selection to an information-centric approach. However, two fundamental questions arise regarding the design of such a mechanism: (1) Metric: What constitutes a theoretical measure of &quot;information&quot; in the context of VLM reasoning? (2) Process: How should the selection mechanism mimic the cognitive process of information gathering, as opposed to static Top-K selection?</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>这种洞察力推动了从基于注意力的选择到以信息为中心的方法的转变。然而，关于这种机制的设计，出现了两个基本问题：（1）度量：在VLM推理的背景下，什么构成了“信息”的理论度量？ (2) 过程：选择机制应该如何模仿信息收集的认知过程，而不是静态的 Top-K 选择？</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p019">
+              <div class="card-index">#019</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>To answer these, we adopt Information Foraging Theory (IFT) as a guiding principle for our framework design. First, regarding the metric, IFT suggests that information is valuable only when it reduces the agent&#x27;s uncertainty . This motivates us to ground our selection criterion in uncertainty reduction (i.e., information gain), which can be quantified by the entropy of the VLM&#x27;s predictive distribution over its vocabulary. Second, regarding the process, IFT characterizes foraging as a sequential trajectory where each step depends on previous knowledge. This suggests that the optimal strategy is not a one-off Top-K selection, but a dynamic, iterative process where the model updates its belief state after every glimpse, i.e., the selected regions are inserted into VLM&#x27;s context in the form of visual tokens.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>为了回答这些问题，我们采用信息觅食理论（IFT）作为我们框架设计的指导原则。首先，关于指标，IFT 认为信息只有在减少智能体的不确定性时才有价值。这促使我们将我们的选择标准建立在不确定性减少（即信息增益）的基础上，这可以通过 VLM 在其词汇表上的预测分布的熵来量化。其次，关于这个过程，IFT 将觅食描述为一个连续的轨迹，其中每一步都取决于先前的知识。这表明最优策略不是一次性的 Top-K 选择，而是一个动态的迭代过程，模型在每次浏览后都会更新其信念状态，即所选区域以视觉标记的形式插入到 VLM 的上下文中。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这里的信息增益可以理解为“看了这个区域后，模型对下一步预测少了多少不确定性”。这比单纯选高注意力区域更贴近推理任务需要。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p020">
+              <div class="card-index">#020</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>These two theoretical insights directly shape the architecture of our AVP module (Section  method 2). Figure  22nd example - motivation 2 compares AVP-selected regions with those from attention-based method, which is further detailed in Appendix  explanation for fig 2.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>这两个理论见解直接塑造了我们 AVP 模块的架构（第 2 节方法）。图 22 个示例 - 动机 2 将 AVP 选择的区域与基于注意力的方法的区域进行了比较，图 2 的附录解释中对此进行了进一步详细说明。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="identifying-when-to-see-from-static-heuristics-to-dynamic-attention-shifts">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Identifying When to See: From Static Heuristics to Dynamic Attention Shifts</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p021">
+              <div class="card-index">#021</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>The fundamental goal of I-MCoT is to ground the VLM&#x27;s reasoning in inserted fine-grained visual evidence. Therefore, the insertions should align with the model&#x27;s fluctuating need for visual evidence across reasoning steps. However, existing methods rely on static triggers like newlines , failing to capture critical moments when the VLM actively seeks visual evidence to support subsequent generation.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>I-MCoT 的基本目标是将 VLM 的推理建立在插入的细粒度视觉证据中。因此，插入应与模型在推理步骤中对视觉证据的波动需求保持一致。然而，现有方法依赖于换行符等静态触发器，无法捕获 VLM 主动寻找视觉证据以支持后续生成的关键时刻。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p022">
+              <div class="card-index">#022</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>To address this, we propose that the attention shift from textual to visual contexts (i.e., the text-to-vision attention shift) serves as a superior, dynamic indicator. Intuitively, a significant pivot in attention towards the visual modality suggests the VLM&#x27;s cognitive demand for visual grounding. Unlike static triggers, monitoring these shifts allows for determining the precise &quot;when&quot; based on the model&#x27;s real-time internal state.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>为了解决这个问题，我们建议将注意力从文本上下文转移到视觉上下文（即文本到视觉注意力转移）作为一个优越的动态指标。直观上，注意力集中在视觉形态上表明 VLM 对视觉基础的认知需求。与静态触发器不同，监视这些变化可以根据模型的实时内部状态确定精确的“时间”。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p023">
+              <div class="card-index">#023</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>We empirically validate this intuition through an in-depth analysis of the baseline model on the LLaVA-W benchmark (detailed in Appendix  motivation for idea 3). Our investigation correlates the timing of visual insertions with model performance, revealing two key observations: (1) Correlation analysis: Synchronizing visual insertions with salient text-to-vision attention shifts strongly correlates with better generation quality. (2) Group analysis: This dynamic shift pattern distinguishes high-quality responses from low-quality ones.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>我们通过对 LLaVA-W 基准的基线模型进行深入分析，以实证方式验证了这种直觉（详见附录想法 3 的动机）。我们的研究将视觉插入的时间与模型性能相关联，揭示了两个关键观察结果：（1）相关性分析：将视觉插入与显著的文本到视觉注意力转移同步与更好的生成质量密切相关。 (2) 群体分析：这种动态变化模式将高质量响应与低质量响应区分开来。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li><li>这段属于实证支撑。阅读时要分清最终性能、区域质量分析、消融实验三类证据，它们分别回答“有没有提升”“为什么提升”“哪个模块有效”。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p024">
+              <div class="card-index">#024</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>In conclusion, although attention is unreliable as a decision rule for selection, its shift is still a reliable diagnostic signal revealing when the model is seeking visual information. Motivated by this, we present DAT, an attention-shift trigger that dynamically activates visual insertions (Section  method 3).</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>总之，虽然注意力作为选择的决策规则并不可靠，但当模型寻求视觉信息时，它的转变仍然是一个可靠的诊断信号。受此启发，我们提出了 DAT，一种动态激活视觉插入的注意力转移触发器（第 3 节方法）。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段抓住了 I-MCoT 的两个核心控制变量：选择哪块视觉证据，以及在生成过程中的哪个时刻插入。后文的三个模块都围绕这两个变量展开。</li><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="aim-cot">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>AIM-CoT</span>
+                  </summary>
+                  <p class="section-intro">方法部分把问题组织成 Trigger-Select-Insert 循环。CAG 负责增强文本上下文，AVP 负责用信息增益贪心选区域，DAT 负责在注意力从文本转向视觉时触发插入。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p025">
+              <div class="card-index">#025</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>In this section, we begin by briefly reviewing the background of vision-language reasoning. Then, based on the motivations detailed in Section  motivations, we present AIM-CoT. As a training-free framework, AIM-CoT models the interleaved-modal reasoning as an information-foraging process with three synergistic components: (1) CAG, which pre-processes the input to generate a fine-grained description, mitigating text-vision granularity imbalance. (2) AVP, which proactively selects regions that maximize information gain whenever activated. (3) DAT, which triggers AVP to insert visual evidence into the CoT precisely when the model&#x27;s cognitive focus shifts from text to vision. A visualization of AIM-CoT is shown in Figure  framework for avp.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>在本节中，我们首先简要回顾视觉-语言推理的背景。然后，根据动机部分详细介绍的动机，我们提出了 AIM-CoT。作为一个免训练框架，AIM-CoT 将交错模态推理建模为具有三个协同组件的信息采集过程：（1）CAG，它对输入进行预处理以生成细粒度的描述，从而减轻文本视觉粒度不平衡。 (2) AVP，主动选择激活时信息增益最大化的区域。 (3) DAT，当模型的认知焦点从文本转移到视觉时，它会触发 AVP 将视觉证据准确地插入到 CoT 中。 AIM-CoT 的可视化如图 avp 框架所示。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这里的信息增益可以理解为“看了这个区域后，模型对下一步预测少了多少不确定性”。这比单纯选高注意力区域更贴近推理任务需要。</li><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p026">
+              <div class="card-index">#026</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>It is important to distinguish AIM-CoT from attribution methods that rely on masking or deleting parts of the input image. AIM-CoT operates on a frozen VLM and adopts a &quot;Trigger-Select-Insert&quot; paradigm: although sub-regions are integrated as visual evidence, the input context, including the original image is fully preserved. This ensures the VLM operates on a coherent, augmented context rather than a disrupted one .</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>将 AIM-CoT 与依赖于屏蔽或删除部分输入图像的归因方法区分开来非常重要。 AIM-CoT 在冻结的 VLM 上运行，并采用“触发-选择-插入”范例：虽然子区域被集成为视觉证据，但输入上下文（包括原始图像）被完全保留。这确保了 VLM 在连贯、增强的环境中运行，而不是在混乱的环境中运行。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="preliminaries">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Preliminaries</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p027">
+              <div class="card-index">#027</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Due to space constraints, we defer the definitions of important concepts to Appendix  concept intro, including (1) the Vision-Language Models (VLMs), (2) the Context Window of a VLM, (3) Patches and Regions (i.e., Visual Tokenization), and (4) I-MCoT.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>由于空间限制，我们将重要概念的定义推迟到附录概念介绍中，包括（1）视觉-语言模型（VLM），（2）VLM的上下文窗口，（3）补丁和区域（即视觉标记化）和（4）I-MCoT。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这里关注风险控制：视觉证据插入如果不加约束，可能让模型过度相信错误局部图像。负约束和一致性检查是部署时必须保留的安全层。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="context-enhanced-attention-map-generation-cag">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Context-enhanced Attention-map Generation (CAG)</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p028">
+              <div class="card-index">#028</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>As revealed in Section  motivation for idea 1 and prior research , attention is an unreliable basis for visual selection, particularly under severe text-vision granularity imbalance. Although AIM-CoT shifts from passive attention-based selection to proactive information-driven selection, we argue that refining the VLM&#x27;s attention distribution remains meaningful for the interleaved-modal reasoning process. This is primarily for two reasons: (1) a more reliable attention distribution benefits reasoning, since it serves as the basis of model generation; and (2) crucially, the attention map serves as a source of candidate regions for subsequent selection (Section  method 2).</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>正如第 1 节的动机和先前的研究所揭示的那样，注意力是视觉选择的不可靠基础，特别是在严重的文本视觉粒度不平衡的情况下。尽管 AIM-CoT 从被动的基于注意力的选择转变为主动的信息驱动的选择，但我们认为，改进 VLM 的注意力分布对于交错模态推理过程仍然有意义。这主要有两个原因：（1）更可靠的注意力分配有利于推理，因为它是模型生成的基础； (2) 至关重要的是，注意力图作为后续选择的候选区域的来源（第 2 节方法）。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p029">
+              <div class="card-index">#029</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>To this end, we propose CAG to improve the VLM&#x27;s cross-attention distribution by mitigating the text-vision granularity imbalance. Specifically, before the VQA process begins, the VLM is elicited to carefully generate an explanatory description of the input image conditioned on the textual query. Rather than appending a caption, this process enriches the brief query with more semantic anchors that encode visual information within the image, thereby alleviating the granularity imbalance. Formally, this is expressed as follows:</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>为此，我们提出 CAG 通过减轻文本视觉粒度不平衡来改善 VLM 的交叉注意力分布。具体来说，在 VQA 过程开始之前，VLM 会根据文本查询仔细生成输入图像的解释性描述。此过程不是附加描述，而是使用更多语义锚来丰富简短查询，这些语义锚对图像内的视觉信息进行编码，从而减轻粒度不平衡。形式上，这表示如下：</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+                <article class="reading-card equation-card" id="p030">
+                  <div class="card-index">#030</div>
+                  <div class="triple">
+                    <section>
+                      <h4>原文公式</h4>
+                      <div class="math-block">\[\mathcal{D}_{\text{CAG}} &amp;= \text{VLM}(I, x, \mathcal{P}_{\text{CAG}}), \\
+    x&#x27; &amp;= \text{concat}(x, \mathcal{D}_{\text{CAG}}),\]</div>
+                    </section>
+                    <section>
+                      <h4>中文说明</h4>
+                      <p>公式保持原始符号。这里的核心是用数学形式定义模块的注意力、信息增益、触发阈值或复杂度。</p>
+                    </section>
+                    <section>
+                      <h4>讲解</h4>
+                      <ul><li>先看公式左右两边分别代表什么，再回到上下文理解它服务于 CAG、AVP、DAT 中的哪一个环节。</li><li>这类公式通常不是为了推导新模型结构，而是把选择和触发规则写成可复现的计算过程。</li></ul>
+                    </section>
+                  </div>
+                </article>
+                
+
+            <article class="reading-card" id="p031">
+              <div class="card-index">#031</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>where 𝒫_CAG is the prompt for generating the description. x&#x27; is the updated textual query that integrates the description 𝒟_CAG. A template of 𝒫_CAG is provided in Appendix  template of P_CAG.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>其中𝒫_CAG是生成描述的提示。 x&#x27; 是更新后的文本查询，集成了描述𝒟_CAG。 P_CAG 的附录模板中提供了𝒫_CAG 的模板。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p032">
+              <div class="card-index">#032</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>To ensure the output 𝒟_CAG serves as a reliable textual anchor while preventing error propagation to downstream modules, it is vital to mitigate potential hallucinations within it. To this end, the prompt 𝒫_CAG is meticulously designed with negative constraints: it explicitly instructs the model to prioritize visible evidence and adopt a rigorous, cautious stance—skipping uncertain details rather than speculating. Experiments in Appendix cag_reliability validate the effectiveness of negative constraints.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>为了确保输出 𝒟_CAG 充当可靠的文本锚点，同时防止错误传播到下游模块，减轻其中潜在的幻觉至关重要。为此，提示𝒫_CAG经过精心设计，带有负面约束：它明确指示模型优先考虑可见证据，并采取严格、谨慎的立场——跳过不确定的细节而不是猜测。附录cag_reliability中的实验验证了负约束的有效性。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li><li>这段属于实证支撑。阅读时要分清最终性能、区域质量分析、消融实验三类证据，它们分别回答“有没有提升”“为什么提升”“哪个模块有效”。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="active-visual-probing-avp">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Active Visual Probing (AVP)</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p033">
+              <div class="card-index">#033</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Drawing on the analyses in Section  motivation for idea 2, we propose AVP, an information-driven mechanism designed to proactively select the regions with valuable information. Inspired by Information Foraging Theory (IFT), AVP operates through three systematic steps: (1) constructing a diverse candidate region set, (2) quantifying the information gain of each candidate region, and (3) executing a sequential, greedy selection process.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>借鉴第2节动机中的分析，我们提出了AVP，一种信息驱动的机制，旨在主动选择具有有价值信息的区域。受信息觅食理论（IFT）的启发，AVP 通过三个系统步骤进行操作：（1）构建多样化的候选区域集，（2）量化每个候选区域的信息增益，以及（3）执行顺序的贪婪选择过程。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这里的信息增益可以理解为“看了这个区域后，模型对下一步预测少了多少不确定性”。这比单纯选高注意力区域更贴近推理任务需要。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p034">
+              <div class="card-index">#034</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Step 1: Candidate Region Set Construction. As introduced in Appendix  concept intro, each input image is partitioned into multiple regions with a fixed partitioning method. Although the partition for a given input image is deterministic, evaluating the information gain of each of these regions could be computationally prohibitive. Therefore, it is necessary to construct a candidate pool, which is a subset of the raw partition.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>步骤1：候选区域集构建。正如附录概念介绍中所介绍的，每个输入图像都使用固定的划分方法划分为多个区域。尽管给定输入图像的分区是确定性的，但评估每个区域的信息增益在计算上可能会令人望而却步。因此，有必要构建一个候选池，它是原始分区的子集。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这里的信息增益可以理解为“看了这个区域后，模型对下一步预测少了多少不确定性”。这比单纯选高注意力区域更贴近推理任务需要。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p035">
+              <div class="card-index">#035</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>We propose that although the candidate region set is a subset of the raw partition, it should remain sufficiently informative for subsequent selection. To this end, we derive candidate regions from diverse sources, covering both the VLM&#x27;s current focus and potential blind spots, as follows: Attention-driven Set (C_attn): We select the top-N regions from the CAG-enhanced cross-attention map (A&#x27;), as this subset is a real-time reflection of VLM&#x27;s internal state in the latest reasoning step. Although the attention-based signals can inherently carry noise, analysis in Appendix avp_robustness suggests that our subsequent information-driven selection effectively filters out non-informative high-attention regions (i.e., noise rejection). Exploratory Set (C_exp): To mitigate the &quot;tunnel vision&quot; of attention maps, we extract M exploratory regions by uniformly sampling from all the partitioned regions. Despite its simplicity, this effective strategy outperforms complex alternatives (Appendix  ablation study on C construction) and provides essential regions overlooked by the attention-driven set C_attn (Appendix  proportion of sources). Formally, the total candidate set C is constructed as follows:</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>我们建议，虽然候选区域集是原始分区的子集，但它应该为后续选择保留足够的信息。为此，我们从不同来源导出候选区域，涵盖 VLM 当前的焦点和潜在的盲点，如下所示： 注意力驱动集（C_attn）：我们从 CAG 增强的交叉注意力图（A&#x27;）中选择前 N 个区域，因为该子集是 VLM 在最新推理步骤中内部状态的实时反映。尽管基于注意力的信号本质上可能带有噪声，但附录 avp_robustness 中的分析表明，我们随后的信息驱动选择有效地过滤掉了非信息性高注意力区域（即噪声抑制）。探索集（C_exp）：为了减轻注意力图的“隧道视野”，我们通过从所有分区区域中均匀采样来提取 M 个探索区域。尽管很简单，但这种有效的策略胜过复杂的替代方案（附录 C 构造的消融研究），并提供了被注意力驱动集 C_attn（附录来源比例）所忽略的重要区域。形式上，总候选集C构造如下：</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+                <article class="reading-card equation-card" id="p036">
+                  <div class="card-index">#036</div>
+                  <div class="triple">
+                    <section>
+                      <h4>原文公式</h4>
+                      <div class="math-block">\[C_{attn} &amp;= \{R_1, R_2, \dots, R_N\},   \\
+    C_{exp}  &amp;= \{R_{N+1}, R_{N+2}, \dots, R_{N+M}\},  \\
+    C        &amp;= C_{attn} \cup C_{exp},\]</div>
+                    </section>
+                    <section>
+                      <h4>中文说明</h4>
+                      <p>公式保持原始符号。这里的核心是用数学形式定义模块的注意力、信息增益、触发阈值或复杂度。</p>
+                    </section>
+                    <section>
+                      <h4>讲解</h4>
+                      <ul><li>先看公式左右两边分别代表什么，再回到上下文理解它服务于 CAG、AVP、DAT 中的哪一个环节。</li><li>这类公式通常不是为了推导新模型结构，而是把选择和触发规则写成可复现的计算过程。</li></ul>
+                    </section>
+                  </div>
+                </article>
+                
+
+            <article class="reading-card" id="p037">
+              <div class="card-index">#037</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>where each item denotes a specific image sub-region. For i≤ N, R_i is the i-th most attended region in A&#x27;.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>其中每个项目表示特定的图像子区域。对于i ≤ N ， R_i是A &#x27;中第i个最常出现的区域。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p038">
+              <div class="card-index">#038</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Step 2: Information Gain Quantification. As analyzed in Section  motivation for idea 2, IFT motivates us to identify the most informative regions. Therefore, it is necessary to quantify the information gain of each candidate region in C.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>步骤 2：信息增益量化。正如想法 2 的动机部分中所分析的，IFT 激励我们识别信息最丰富的区域。因此，有必要量化C中每个候选区域的信息增益。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这里的信息增益可以理解为“看了这个区域后，模型对下一步预测少了多少不确定性”。这比单纯选高注意力区域更贴近推理任务需要。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p039">
+              <div class="card-index">#039</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>To quantify Information Gain (IG) of a candidate region, we compare the VLM&#x27;s information content before and after integrating this specific candidate (as visual tokens) into its current context. These pre- and post-insertion information contents are termed basic uncertainty and conditional uncertainty, respectively. Intuitively, they measure the VLM&#x27;s uncertainty in predicting the next token (textual) during autoregression under these two states, respectively. Formally, Basic Uncertainty (U_B) is defined as the entropy of the VLM&#x27;s next-token distribution given the current context, and Conditional Uncertainty (U_C,i) as the entropy after explicitly introducing candidate region R_i.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>为了量化候选区域的信息增益 (IG)，我们比较了将该特定候选区域（作为视觉标记）集成到其当前上下文之前和之后的 VLM 信息内容。这些插入前和插入后的信息内容分别称为基本不确定性和条件不确定性。直观上，它们分别衡量了 VLM 在这两种状态下的自回归过程中预测下一个标记（文本）的不确定性。形式上，基本不确定性（U_B）被定义为给定当前上下文的VLM下一个令牌分布的熵，条件不确定性（U_C,i）被定义为显式引入候选区域R_i后的熵。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这里的信息增益可以理解为“看了这个区域后，模型对下一步预测少了多少不确定性”。这比单纯选高注意力区域更贴近推理任务需要。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+                <article class="reading-card equation-card" id="p040">
+                  <div class="card-index">#040</div>
+                  <div class="triple">
+                    <section>
+                      <h4>原文公式</h4>
+                      <div class="math-block">\[&amp; U_B = H(Y | I, x, y_{&lt;t})  \\
+        &amp;= -\sum_{y \in V} P(y | I, x, y_{&lt;t}) \log_2 P(y | I, x, y_{&lt;t}), \\
+   &amp; U_{C,i} = H(Y | I, x, y_{&lt;t}, R_i)  \\
+            &amp;= -\sum_{y \in V} P(y | I, x, y_{&lt;t}, R_i) \log_2 P(y | I, x, y_{&lt;t}, R_i),\]</div>
+                    </section>
+                    <section>
+                      <h4>中文说明</h4>
+                      <p>公式保持原始符号。这里的核心是用数学形式定义模块的注意力、信息增益、触发阈值或复杂度。</p>
+                    </section>
+                    <section>
+                      <h4>讲解</h4>
+                      <ul><li>先看公式左右两边分别代表什么，再回到上下文理解它服务于 CAG、AVP、DAT 中的哪一个环节。</li><li>这类公式通常不是为了推导新模型结构，而是把选择和触发规则写成可复现的计算过程。</li></ul>
+                    </section>
+                  </div>
+                </article>
+                
+
+            <article class="reading-card" id="p041">
+              <div class="card-index">#041</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>where V is the vocabulary, and y_&lt;t represents the generated tokens. The information gain is thus derived as:</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>其中 V 是词汇表，y_&lt;t 表示生成的标记。信息增益由此得出：</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这里的信息增益可以理解为“看了这个区域后，模型对下一步预测少了多少不确定性”。这比单纯选高注意力区域更贴近推理任务需要。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+                <article class="reading-card equation-card" id="p042">
+                  <div class="card-index">#042</div>
+                  <div class="triple">
+                    <section>
+                      <h4>原文公式</h4>
+                      <div class="math-block">\[IG(\{R_i\}) = U_B - U_{C,i}, \; i = 1, \dots, N+M.\]</div>
+                    </section>
+                    <section>
+                      <h4>中文说明</h4>
+                      <p>公式保持原始符号。这里的核心是用数学形式定义模块的注意力、信息增益、触发阈值或复杂度。</p>
+                    </section>
+                    <section>
+                      <h4>讲解</h4>
+                      <ul><li>先看公式左右两边分别代表什么，再回到上下文理解它服务于 CAG、AVP、DAT 中的哪一个环节。</li><li>这类公式通常不是为了推导新模型结构，而是把选择和触发规则写成可复现的计算过程。</li></ul>
+                    </section>
+                  </div>
+                </article>
+                
+
+            <article class="reading-card" id="p043">
+              <div class="card-index">#043</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Although this calculation requires a forward pass, Appendix  complexity of AVP shows that AIM-CoT remains highly deployable, with an average inference time under 1.36× that of the highly efficient baseline.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>尽管此计算需要前向传递，但 AVP 的附录复杂度表明 AIM-CoT 仍然具有高度可部署性，平均推理时间低于高效基线的 1.36 倍。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li><li>部署分析提醒我们，AIM-CoT 用额外计算换更可靠证据。它适合推理质量比低延迟更重要的场景，也可以通过减少候选数和触发频率控制成本。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p044">
+              <div class="card-index">#044</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Step 3: Sequential Selection Process. Finally, as analyzed in Section  motivation for idea 2, drawing on the iterative nature of information foraging, where each step depends on previous knowledge, we frame region selection as a sequential trajectory. Specifically, in each step, we propose to select the region that provides the maximum information gain conditioned on the context updated in the last step, as outlined in Algorithm alg:greedy. This is because this greedy algorithm (1) intuitively moves maximally toward providing the VLM with the most visual information at each step, and besides, (2) it has theoretical support: regarding such a subset selection problem, it yields an approximation to the global optimum (i.e., the maximum information gain) for the VLM. We provide comprehensive analyses of this theoretical property in Appendix  proof for function F.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>步骤 3：顺序选择过程。最后，正如想法 2 的动机部分所分析的那样，利用信息觅食的迭代性质，其中每个步骤都取决于先前的知识，我们将区域选择构建为顺序轨迹。具体来说，在每个步骤中，我们建议选择根据最后一步更新的上下文提供最大信息增益的区域，如算法 alg:greedy 中所述。这是因为这种贪婪算法（1）直观地最大限度地在每一步为 VLM 提供最多的视觉信息，此外，（2）它有理论支持：对于这样的子集选择问题，它产生 VLM 的全局最优（即最大信息增益）的近似值。我们在函数 F 的附录证明中提供了对该理论属性的全面分析。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这里的信息增益可以理解为“看了这个区域后，模型对下一步预测少了多少不确定性”。这比单纯选高注意力区域更贴近推理任务需要。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="dynamic-attention-shift-trigger-dat">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Dynamic Attention-shift Trigger (DAT)</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p045">
+              <div class="card-index">#045</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>As identified in Section  motivation for idea 3, although attention remains an unreliable basis for selection, its shift serves as a reliable diagnostic signal for triggering. Motivated by this, we propose DAT, the trigger component of AIM-CoT. DAT tracks the VLM&#x27;s text-to-vision attention shifts across the autoregressive steps, as they reflect the VLM&#x27;s dynamic need for visual evidence. Then, based on the magnitude of each shift, DAT determines whether the visual evidence should be introduced via AVP at that step.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>正如想法 3 的动机部分所指出的，尽管注意力仍然是选择的不可靠基础，但它的转变可以作为触发的可靠诊断信号。受此启发，我们提出了 DAT，它是 AIM-CoT 的触发组件。 DAT 跟踪 VLM 在自回归步骤中从文本到视觉的注意力转移，因为它们反映了 VLM 对视觉证据的动态需求。然后，根据每个转变的幅度，DAT 确定是否应在该步骤通过 AVP 引入视觉证据。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段抓住了 I-MCoT 的两个核心控制变量：选择哪块视觉证据，以及在生成过程中的哪个时刻插入。后文的三个模块都围绕这两个变量展开。</li><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="quantification-of-text-to-vision-attention-shift">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Quantification of Text-to-vision Attention Shift.</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p046">
+              <div class="card-index">#046</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>The text-to-vision attention shift is determined by the difference in attention distributions between steps. Intuitively, it tracks the flow of attention from the text context in the previous step to the visual context in the current step. Furthermore, since the sum of attention scores over these two parts (i.e., text and vision) is fixed in the VLM&#x27;s normalized attention map, it is sufficient to focus on the attention shift in the visual part. Formally, this can be quantified as follows:</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>文本到视觉的注意力转移是由步骤之间注意力分布的差异决定的。直观上，它跟踪从上一步中的文本上下文到当前步骤中的视觉上下文的注意力流。此外，由于这两个部分（即文本和视觉）的注意力分数之和在 VLM 的归一化注意力图中是固定的，因此专注于视觉部分的注意力转移就足够了。形式上，这可以量化如下：</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+                <article class="reading-card equation-card" id="p047">
+                  <div class="card-index">#047</div>
+                  <div class="triple">
+                    <section>
+                      <h4>原文公式</h4>
+                      <div class="math-block">\[\Delta A_{vision}(t) = A_{vision}(t) - A_{vision}(t-1),\]</div>
+                    </section>
+                    <section>
+                      <h4>中文说明</h4>
+                      <p>公式保持原始符号。这里的核心是用数学形式定义模块的注意力、信息增益、触发阈值或复杂度。</p>
+                    </section>
+                    <section>
+                      <h4>讲解</h4>
+                      <ul><li>先看公式左右两边分别代表什么，再回到上下文理解它服务于 CAG、AVP、DAT 中的哪一个环节。</li><li>这类公式通常不是为了推导新模型结构，而是把选择和触发规则写成可复现的计算过程。</li></ul>
+                    </section>
+                  </div>
+                </article>
+                
+
+            <article class="reading-card" id="p048">
+              <div class="card-index">#048</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>where A_vision(t) and A_vision(t-1) represent the sum of attention scores allocated to all the visual tokens in the context by the currently predicted token (the t-th token) and the preceding token (the (t-1)-th token), respectively.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>其中 A_vision(t) 和 A_vision(t-1) 分别表示当前预测的标记（第 t 个标记）和先前的标记（第 (t-1) 个标记）分配给上下文中所有视觉标记的注意力分数之和。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="triggering-condition">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Triggering Condition.</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p049">
+              <div class="card-index">#049</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>DAT determines if a given shift Δ A_vision(t) is significant enough to warrant the provision of visual evidence via a qualitative criterion. In the criterion, a hyper-parameter δ∈ℝ is introduced to serve as the threshold. The AVP module is triggered to perform visual insertion after the t-th generation step if and only if Δ A_vision(t) &gt; δ.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>DAT 确定给定的偏移 Δ A_vision(t) 是否足够重要，足以保证通过定性标准提供视觉证据。在准则中，引入超参数δεℝ作为阈值。当且仅当 Δ A_vision(t) &gt; δ 时，AVP 模块才会在第 t 代步骤后被触发执行视觉插入。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p050">
+              <div class="card-index">#050</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>In Appendix  sensitivity analysis of delta, we provide a detailed sensitivity analysis of δ and introduce an adaptive thresholding strategy to set δ automatically.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>在附录δ的敏感性分析中，我们提供了详细的δ敏感性分析，并引入了自适应阈值策略来自动设置δ。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="critical-integration-strategy">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Critical Integration Strategy.</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p051">
+              <div class="card-index">#051</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>A potential challenge inherent to the I-MCoT paradigm is the difficulty in eliminating noise that visual evidence might introduce. To address this, DAT does not naively trigger the visual evidence insertion. Instead, it employs a critical integration mechanism: the inserted regions are accompanied by a safety instruction, which cues the VLM to treat the visual evidence as &quot;supplementary references&quot;, encouraging the model to verify semantic consistency with the existing textual context. This effectively filters out irrelevant or hallucinated visual cues.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>I-MCoT 范式固有的一个潜在挑战是难以消除视觉证据可能引入的噪音。为了解决这个问题，DAT 不会天真地触发视觉证据插入。相反，它采用了一种关键的集成机制：插入的区域附有安全指令，这提示 VLM 将视觉证据视为“补充参考”，鼓励模型验证与现有文本上下文的语义一致性。这有效地过滤掉了不相关或幻觉的视觉线索。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li><li>这里关注风险控制：视觉证据插入如果不加约束，可能让模型过度相信错误局部图像。负约束和一致性检查是部署时必须保留的安全层。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p052">
+              <div class="card-index">#052</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>We validate the effectiveness of this safety instruction in Appendix dat_safety.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>我们在附录 dat_safety 中验证了该安全说明的有效性。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li><li>这里关注风险控制：视觉证据插入如果不加约束，可能让模型过度相信错误局部图像。负约束和一致性检查是部署时必须保留的安全层。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="experiments">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Experiments</span>
+                  </summary>
+                  <p class="section-intro">实验部分需要看三个层次：主结果是否优于基线，消融是否证明三个模块各自有效，额外分析是否支持“选择的区域更符合语义和人类直觉”。</p>
+                  <div class="section-body">
+                
+</div></details>
+
+                <details class="paper-section" id="evaluation-setup">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Evaluation Setup</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p053">
+              <div class="card-index">#053</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Benchmark. We evaluate AIM-CoT on three widely used VQA benchmarks: M3CoT , ScienceQA , and LLaVA-W . Detailed descriptions are provided in Appendix  introduction to benchmarks.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>基准。我们在三个广泛使用的 VQA 基准上评估 AIM-CoT：M3CoT、ScienceQA 和 LLaVA-W。附录基准介绍中提供了详细说明。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li><li>这段属于实证支撑。阅读时要分清最终性能、区域质量分析、消融实验三类证据，它们分别回答“有没有提升”“为什么提升”“哪个模块有效”。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p054">
+              <div class="card-index">#054</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Baselines. We compare against several text-only baselines, including vanilla VLM without CoT (No-CoT), DDCoT , MMCoT , CCoT , and SCAFFOLD . On top of these, the leading I-MCoT framework ICoT , is also included. More details are available in Appendix  introduction to baseline models. When possible, we directly report figures from prior work.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>基线。我们与几个纯文本基线进行比较，包括没有 CoT (No-CoT)、DDCoT、MMCoT、CCoT 和 SCAFFOLD 的普通 VLM。除此之外，还包括领先的 I-MCoT 框架 ICoT。更多详细信息请参阅附录基线模型介绍。如果可能，我们直接报告之前工作的数据。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p055">
+              <div class="card-index">#055</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Backbones. The implementation is built on four mainstream VLM backbones with different architectures and scales: early-fusion Chameleon-7B and Janus-Pro-7B , and late-fusion Qwen2-VL-7B and Qwen2.5-VL-32B . We conduct experiments in both 0- and 1-shot settings, using the prompt template from the open-source ICoT implementation .</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>骨干。该实现建立在具有不同架构和规模的四个主流 VLM 主干上：早期融合 Chameleon-7B 和 Janus-Pro-7B ，以及后期融合 Qwen2-VL-7B 和 Qwen2.5-VL-32B 。我们使用开源 ICoT 实现中的提示模板在 0 次和 1 次设置中进行实验。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段属于实证支撑。阅读时要分清最终性能、区域质量分析、消融实验三类证据，它们分别回答“有没有提升”“为什么提升”“哪个模块有效”。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p056">
+              <div class="card-index">#056</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Hyper-parameter. Hyper-parameter settings are listed in Appendix  hyper-parameter settings.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>超参数。超参数设置请参见附录超参数设置。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="performance-comparison">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Performance Comparison</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p057">
+              <div class="card-index">#057</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Table  performance_chameleon reports the experimental results. AIM-CoT consistently outperforms all baselines (both text-only and I-MCoT) across all benchmarks and backbones, under both 0- and 1-shot settings. This demonstrates the strong advantage of AIM-CoT for complex vision-language reasoning (besides, the analyses in Appendix  complexity of AVP show that AIM-CoT maintains good deployability).</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>表 Performance_chameleon 报告了实验结果。在 0 次和 1 次设置下，AIM-CoT 在所有基准和主干上始终优于所有基准（纯文本和 I-MCoT）。这证明了AIM-CoT对于复杂视觉-语言推理的强大优势（此外，AVP附录复杂性分析表明AIM-CoT保持了良好的可部署性）。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li><li>这段属于实证支撑。阅读时要分清最终性能、区域质量分析、消融实验三类证据，它们分别回答“有没有提升”“为什么提升”“哪个模块有效”。</li><li>部署分析提醒我们，AIM-CoT 用额外计算换更可靠证据。它适合推理质量比低延迟更重要的场景，也可以通过减少候选数和触发频率控制成本。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p058">
+              <div class="card-index">#058</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>More specifically, both I-MCoT methods (AIM-CoT and ICoT) surpass the text-only baselines, confirming the efficacy of explicit incorporation of visual evidence. Moreover, although AIM-CoT and ICoT follow the same I-MCoT paradigm, AIM-CoT achieves stronger performance. This gain comes from three key improvements: (1) AIM-CoT uses CAG to directly refine the VLM&#x27;s cross-attention distribution, instead of grounding in the unreliable signal used by ICoT; (2) it replaces fragile attention-based heuristics with information-driven selection (AVP); and (3) it replaces a static trigger with a dynamic and more precise trigger (DAT).</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>更具体地说，两种 I-MCoT 方法（AIM-CoT 和 ICoT）都超越了纯文本基线，证实了显式纳入视觉证据的有效性。此外，虽然AIM-CoT和ICoT遵循相同的I-MCoT范式，但AIM-CoT实现了更强的性能。这一增益来自三个关键改进：（1）AIM-CoT 使用 CAG 直接细化 VLM 的交叉注意力分布，而不是扎根于 ICoT 使用的不可靠信号； （2）它用信息驱动选择（AVP）取代了脆弱的基于注意力的启发法； (3)它用动态且更精确的触发器(DAT)取代了静态触发器。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段抓住了 I-MCoT 的两个核心控制变量：选择哪块视觉证据，以及在生成过程中的哪个时刻插入。后文的三个模块都围绕这两个变量展开。</li><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p059">
+              <div class="card-index">#059</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Finally, the performance gains vary across backbones. In Appendix sec:performance_variance_analysis, we analyze this effect in detail and attribute it to the interaction between model architecture and model scale.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>最后，不同主干网的性能提升有所不同。在附录秒：性能方差分析中，我们详细分析了这种影响，并将其归因于模型架构和模型规模之间的相互作用。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段属于实证支撑。阅读时要分清最终性能、区域质量分析、消融实验三类证据，它们分别回答“有没有提升”“为什么提升”“哪个模块有效”。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="ablation-study">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Ablation Study</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p060">
+              <div class="card-index">#060</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>In this section, we conduct the ablation study to verify the efficacy of each component within AIM-CoT. The detailed settings are as follows: w/o CAG: The VLM operates under the image I and the raw query x, instead of the CAG-enhanced query x&#x27;. w/o AVP: The information-driven selection (AVP) is replaced by attention-based selection. w/o DAT: DAT is substituted with a static trigger (i.e., visual evidence is inserted whenever the VLM outputs a newline character). The results on Chameleon-7B are shown in Table  ablation study (ours) (more results and analyses on other backbones are deferred to Appendix extensive ablation studies). First, refining the VLM&#x27;s attention distribution via CAG can strongly improve VLM&#x27;s performance on VQA tasks. This is because the attention is not only the basis of model generation but also one source of candidate evidence. Furthermore, (1) even without CAG, AIM-CoT still significantly outperforms ICoT (Table  performance_chameleon); and (2) removing AVP and DAT causes a larger performance drop than removing CAG. These results highlight the importance of tackling the what to see and when to see it questions. In response to these two issues, we propose AVP and DAT, respectively.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>在本节中，我们进行消融研究以验证 AIM-CoT 中每个组件的功效。详细设置如下： w/o CAG：VLM在图像I和原始查询x下运行，而不是在CAG增强查询x&#x27;下运行。 w/o AVP：信息驱动选择（AVP）被基于注意力的选择所取代。无 DAT：用静态触发器替代 DAT（即，只要 VLM 输出换行符，就会插入视觉证据）。 Chameleon-7B 的结果显示在表消融研究（我们的）中（其他骨干网的更多结果和分析推迟到附录广泛的消融研究）。首先，通过 CAG 细化 VLM 的注意力分布可以极大地提高 VLM 在 VQA 任务上的性能。这是因为注意力不仅是模型生成的基础，也是候选证据的来源之一。此外，（1）即使没有CAG，AIM-CoT仍然显著优于ICoT（表performance_chameleon）； (2)删除AVP和DAT比删除CAG造成更大的性能下降。这些结果凸显了解决看什么和何时看问题的重要性。针对这两个问题，我们分别提出AVP和DAT。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段抓住了 I-MCoT 的两个核心控制变量：选择哪块视觉证据，以及在生成过程中的哪个时刻插入。后文的三个模块都围绕这两个变量展开。</li><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p061">
+              <div class="card-index">#061</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>To provide a comprehensive understanding of AIM-CoT, we go beyond merely validating component efficacy. In Sections app:semantic_relevance, app:human_alignment_gpt4v, and Appendix qualitative_case_IG_vs_AS, we present both quantitative and visualized qualitative analyses of AVP, elucidating why information-driven regions are more effective than attention-based regions.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>为了全面了解 AIM-CoT，我们不仅仅验证组件功效。在app:semantic_relevance、app: human_alignment_gpt4v和附录定性_case_IG_vs_AS章节中，我们提出了AVP的定量和可视化定性分析，阐明了为什么信息驱动的区域比基于注意力的区域更有效。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="interplay-between-cag-and-avp">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Interplay between CAG and AVP</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p062">
+              <div class="card-index">#062</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>In this section, we investigate the interaction between CAG and AVP. This is achieved by sequentially adding them to a basic model (BM) (i.e., AIM-CoT stripped of all its components).</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>在本节中，我们研究 CAG 和 AVP 之间的相互作用。这是通过将它们依次添加到基本模型 (BM)（即剥离所有组件的 AIM-CoT）来实现的。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p063">
+              <div class="card-index">#063</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>As shown in Table  ablation study (baseline), while CAG and AVP yield individual gains, their combination exhibits a clear phenomenon of super-additivity, i.e., the joint improvement consistently exceeds the sum of their separate contributions. Specifically, on M3CoT, the joint gain (+1.0%) significantly surpasses the linear sum of individual gains (0.3% + 0.4% = 0.7%). This trend holds across all benchmarks (e.g., +1.7% &gt; 1.4% on ScienceQA).</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>如表消融研究（基线）所示，虽然 CAG 和 AVP 产生各自的增益，但它们的组合表现出明显的超可加性现象，即联合改进始终超过其单独贡献的总和。具体来说，在 M3CoT 上，联合增益 (+1.0%) 显著超过个体增益的线性总和 (0.3% + 0.4% = 0.7%)。这一趋势适用于所有基准（例如，ScienceQA 的 +1.7% &gt; 1.4%）。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li><li>这段属于实证支撑。阅读时要分清最终性能、区域质量分析、消融实验三类证据，它们分别回答“有没有提升”“为什么提升”“哪个模块有效”。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p064">
+              <div class="card-index">#064</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>This non-linear boost validates the interplay between the modules: CAG refines the VLM&#x27;s attention distribution, which amplifies AVP&#x27;s effectiveness; the AVP, in turn, precisely mines the salient visual evidence from the attention-driven candidates (C_attn) enhanced by CAG.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>这种非线性提升验证了模块之间的相互作用：CAG 细化了 VLM 的注意力分布，从而放大了 AVP 的有效性；反过来，AVP 可以从经 CAG 增强的注意力驱动候选者 (C_attn) 中精确挖掘显著的视觉证据。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>CAG 的关键不是给图片写通用 caption，而是生成与问题相关的描述，让短文本问题获得更多语义锚点，从而缓解文本和图像粒度不平衡。</li><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="quantitative-analysis-semantic-relevance">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Quantitative Analysis: Semantic Relevance</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p065">
+              <div class="card-index">#065</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>We further examine whether the visual regions selected by AIM-CoT match human-centered perception and the needs of the task. Our premise is that informative evidence should correspond to distinct and complete semantic entities rather than repetitive background patterns. We therefore use the Segment Anything Model (SAM) as a proxy to assess whether the selected regions align with meaningful object concepts.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>我们进一步检查 AIM-CoT 选择的视觉区域是否符合以人为中心的感知和任务的需求。我们的前提是信息证据应该对应于独特且完整的语义实体，而不是重复的背景模式。因此，我们使用Segment Anything Model (SAM) 作为代理来评估所选区域是否与有意义的对象概念相符。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p066">
+              <div class="card-index">#066</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>We conduct this evaluation on M3CoT and ScienceQA, randomly sampling 500 instances from each benchmark. Results are averaged over the four backbones: Chameleon-7B, Janus-Pro-7B, Qwen2-VL-7B, and Qwen2.5-VL-32B. To build a reference for visually relevant evidence, we use SAM to generate segmentation masks for the key entities mentioned in the question and ground-truth answer. We then define the Semantic Hit Rate (SHR) as the percentage of instances in which the selected regions substantially overlap with the corresponding SAM masks, measured by IoU greater than 0.5.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>我们在 M3CoT 和 ScienceQA 上进行此评估，从每个基准测试中随机抽取 500 个实例。结果对四个骨干网进行平均：Chameleon-7B、Janus-Pro-7B、Qwen2-VL-7B 和 Qwen2.5-VL-32B。为了构建视觉相关证据的参考，我们使用 SAM 为问题和真实答案中提到的关键实体生成分割掩码。然后，我们将语义命中率 (SHR) 定义为所选区域与相应 SAM 掩模基本重叠的实例的百分比，以 IoU 大于 0.5 来衡量。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段属于实证支撑。阅读时要分清最终性能、区域质量分析、消融实验三类证据，它们分别回答“有没有提升”“为什么提升”“哪个模块有效”。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p067">
+              <div class="card-index">#067</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>Table semantic_hit_rate shows that the attention-driven Top-K strategy used by ICoT struggles to recover semantically relevant evidence, with SHR dropping to 18.7% on M3CoT. This supports the observation that raw attention maps often drift toward high-contrast background patterns or generic salient objects, rather than the specific evidence required for reasoning. In contrast, AIM-CoT achieves substantially higher SHR scores, reaching 65.2% on M3CoT and 71.8% on ScienceQA. These results indicate that our active information-seeking paradigm filters out distractors and selects regions that are both structurally coherent and semantically aligned with the question, making them closer to human judgments of relevant evidence.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>表语义命中率显示，ICoT 使用的注意力驱动的 Top-K 策略很难恢复语义相关的证据，M3CoT 上的 SHR 下降至 18.7%。这支持了这样的观察结果：原始注意力图通常会倾向于高对比度背景图案或通用显著对象，而不是推理所需的具体证据。相比之下，AIM-CoT 的 SHR 分数要高得多，在 M3CoT 上达到 65.2%，在 ScienceQA 上达到 71.8%。这些结果表明，我们主动的信息寻求范式过滤掉了干扰因素，并选择了结构上一致且语义上与问题一致的区域，使它们更接近人类对相关证据的判断。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="quantitative-analysis-alignment-with-human-intuition">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Quantitative Analysis: Alignment with Human Intuition</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p068">
+              <div class="card-index">#068</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>We next evaluate whether the visual regions selected by AIM-CoT better align with human intuition than those selected by the attention-driven baseline. Following prior work, we use GPT-4v as an expert proxy judge, as strong multimodal judges have been shown to correlate well with human preferences .</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>接下来，我们评估 AIM-CoT 选择的视觉区域是否比注意力驱动基线选择的视觉区域更符合人类直觉。根据之前的工作，我们使用 GPT-4v 作为专家代理评审器，因为强大的多模态评审器已被证明与人类偏好密切相关。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p069">
+              <div class="card-index">#069</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>We evaluate 500 randomly sampled instances from the M3CoT and LLaVA-W benchmarks. For each instance, GPT-4v is given the textual query, the original image, and two anonymized sets of selected regions: one produced by ICoT (Top-K) and the other by AIM-CoT (AVP). We randomize the order of the two sets to eliminate position bias. GPT-4v then compares them along three criteria: semantic relevance, object completeness, and overall helpfulness. The evaluation prompt is shown in Table gpt4v_prompt_box.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>我们评估了 M3CoT 和 LLaVA-W 基准测试中随机采样的 500 个实例。对于每个实例，GPT-4v 都会获得文本查询、原始图像和两组匿名的选定区域：一组由 ICoT (Top-K) 生成，另一组由 AIM-CoT (AVP) 生成。我们随机化两组的顺序以消除位置偏差。然后，GPT-4v 根据三个标准对它们进行比较：语义相关性、对象完整性和整体有用性。评估提示如表 gpt4v_prompt_box 所示。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>AVP 把视觉区域选择变成主动探查：先构造候选，再用 lookahead 式的信息增益评估，最后逐步插入最有用区域。</li><li>这段属于实证支撑。阅读时要分清最终性能、区域质量分析、消融实验三类证据，它们分别回答“有没有提升”“为什么提升”“哪个模块有效”。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+
+            <article class="reading-card" id="p070">
+              <div class="card-index">#070</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>As shown in Table gpt4v_win_rate, AIM-CoT is strongly preferred across both benchmarks. It wins on 76.4% of M3CoT samples and 81.2% of LLaVA-W samples, while only a small fraction favor ICoT. These results suggest that AIM-CoT more consistently identifies complete and semantically informative evidence that matches human intuition. GPT-4v&#x27;s qualitative judgments further indicate that ICoT often focuses on noisy regions, whereas AIM-CoT more reliably localizes the full objects needed for reasoning.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>如表 gpt4v_win_rate 所示，AIM-CoT 在两个基准测试中均受到强烈青睐。它在 76.4% 的 M3CoT 样本和 81.2% 的 LLaVA-W 样本上获胜，而只有一小部分支持 ICoT。这些结果表明，AIM-CoT 能够更一致地识别与人类直觉相匹配的完整且语义信息丰富的证据。 GPT-4v 的定性判断进一步表明 ICoT 通常关注噪声区域，而 AIM-CoT 更可靠地定位推理所需的完整对象。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段属于实证支撑。阅读时要分清最终性能、区域质量分析、消融实验三类证据，它们分别回答“有没有提升”“为什么提升”“哪个模块有效”。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="conclusion">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Conclusion</span>
+                  </summary>
+                  <p class="section-intro">结论回到论文主张：AIM-CoT 以免训练方式改善 VLM 的细粒度视觉证据使用。它的价值在于把“看哪里、何时看”变成可诊断、可触发、可部署的流程。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p071">
+              <div class="card-index">#071</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>In this paper, we propose AIM-CoT, a novel I-MCoT framework that aims to frame the construction of interleaved-modal CoT as an active information-foraging process. Existing methods&#x27; static triggers fail to capture the dynamic needs of the VLM for visual information in complex reasoning, and their attention-based selectors depend heavily on the VLM&#x27;s attention, which can be unreliable (for selection). In response to these challenges, AIM-CoT dynamically monitors the VLM&#x27;s cognitive need for fine-grained visual evidence for subsequent generation, and accordingly, selects salient visual evidence in an information-driven manner. Extensive experiments demonstrate that AIM-CoT outperforms the leading methods across three benchmarks and four VLM backbones.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>在本文中，我们提出了 AIM-CoT，这是一种新颖的 I-MCoT 框架，旨在将交错模态 CoT 的构建构建为主动的信息采集过程。现有方法的静态触发器无法捕获VLM在复杂推理中对视觉信息的动态需求，并且它们的基于注意力的选择器严重依赖于VLM的注意力，这可能是不可靠的（对于选择）。为了应对这些挑战，AIM-CoT动态监控VLM对后续生成的细粒度视觉证据的认知需求，并相应地以信息驱动的方式选择显著的视觉证据。大量实验表明，AIM-CoT 在三个基准测试和四个 VLM 主干上优于领先方法。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段抓住了 I-MCoT 的两个核心控制变量：选择哪块视觉证据，以及在生成过程中的哪个时刻插入。后文的三个模块都围绕这两个变量展开。</li><li>作者对注意力的态度是区分性的：注意力不可靠，不适合直接作为区域选择规则；但注意力分布和注意力转移仍然能作为候选生成与触发诊断信号。</li><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="acknowledgements">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Acknowledgements</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p072">
+              <div class="card-index">#072</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>This work was partially supported by the Guangdong Basic and Applied Basic Research Foundation under Grant No. 2024A1515011949 and 2026A1515011672, the Shenzhen Science and Technology Program under Grant No. GXWD20231130110308001 and JCYJ20250604145617023.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>该工作得到了广东省基础与应用基础研究基金（批准号：2024A1515011949和2026A1515011672）、深圳市科技计划项目（批准号：GXWD20231130110308001和JCYJ20250604145617023）的部分支持。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>DAT 解决的是时机问题：当模型注意力明显从文本转向视觉时，说明当前生成需要更细的视觉依据，此时插入区域证据更自然。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="references">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>References</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p073">
+              <div class="card-index">#073</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+<h2 id="appendix-root">Appendix</h2>
+
+                <details class="paper-section" open id="experimental-setup-and-reproducibility">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Experimental Setup and Reproducibility</span>
+                  </summary>
+                  <p class="section-intro">附录的实验设置说明数据集、基线和超参数。这里用于核对结果是否可复现，以及比较对象是否覆盖了常见多模态 CoT 路线。</p>
+                  <div class="section-body">
+                
+</div></details>
+
+                <details class="paper-section" id="benchmarks">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Benchmarks</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p074">
+              <div class="card-index">#074</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="baselines">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Baselines</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p075">
+              <div class="card-index">#075</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="template-of-cag">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Template of 𝒫_CAG</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p076">
+              <div class="card-index">#076</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="setting-of-hyper-parameters">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Setting of Hyper-parameters</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p077">
+              <div class="card-index">#077</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="supplementary-important-definitions">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Supplementary Important Definitions</span>
+                  </summary>
+                  <p class="section-intro">定义部分把 VLM、上下文窗口、patch、region、I-MCoT 这些术语统一起来。对复现很重要，因为 AIM-CoT 的核心操作就是在 token 级上下文中插入区域证据。</p>
+                  <div class="section-body">
+                
+</div></details>
+
+                <details class="paper-section" id="vision-language-model">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Vision-Language Model.</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p078">
+              <div class="card-index">#078</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="context-window-of-a-vlm">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Context Window of a VLM.</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p079">
+              <div class="card-index">#079</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="visual-tokenization-patches-and-regions">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Visual Tokenization: Patches and Regions.</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p080">
+              <div class="card-index">#080</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="mapping-from-patches-to-regions">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Mapping from Patches to Regions.</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p081">
+              <div class="card-index">#081</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="interleaved-modal-cot-i-mcot">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Interleaved-Modal CoT (I-MCoT).</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p082">
+              <div class="card-index">#082</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="supplementary-details-regarding-motivation-in-section-motivation-for-idea-1">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Supplementary Details Regarding Motivation in Section  motivation for idea 1</span>
+                  </summary>
+                  <p class="section-intro">附录补充了动机实验，尤其是高注意力区域被遮挡后性能下降很小、增强文本能提升注意力对齐。这些结果用于支撑“注意力不能直接当选择器”。</p>
+                  <div class="section-body">
+                
+</div></details>
+
+                <details class="paper-section" id="experiment-for-sufficiency-check">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Experiment for Sufficiency Check</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p083">
+              <div class="card-index">#083</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="experimental-setup">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Experimental Setup.</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p084">
+              <div class="card-index">#084</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="experimental-results">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Experimental Results.</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p085">
+              <div class="card-index">#085</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="experiment-for-text-vision-granularity-imbalance-in-necessity-check">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Experiment for Text-vision Granularity Imbalance in Necessity Check</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p086">
+              <div class="card-index">#086</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="experimental-setup">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Experimental Setup.</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p087">
+              <div class="card-index">#087</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="experimental-results">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Experimental Results.</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p088">
+              <div class="card-index">#088</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="explanation-for-figures">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Explanation for Figures</span>
+                  </summary>
+                  <p class="section-intro">图示解释部分给出 ICHIRAN 案例和框架图读法。它帮助理解为什么信息增益能找到更接近答案的局部区域。</p>
+                  <div class="section-body">
+                
+</div></details>
+
+                <details class="paper-section" id="explanation-for-figure-22nd-example-motivation-2">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Explanation for Figure  22nd example - motivation 2</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p089">
+              <div class="card-index">#089</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="quick-guide-to-framework-overview">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Quick Guide to Framework Overview</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p090">
+              <div class="card-index">#090</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="statistical-significance-testing">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Statistical Significance Testing</span>
+                  </summary>
+                  <p class="section-intro">显著性检验用于说明提升不是偶然波动。分类准确率用 McNemar，开放式 ROUGE-L 用 Wilcoxon，统计选择是合理的。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p091">
+              <div class="card-index">#091</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="m3cot-and-scienceqa">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>M3CoT and ScienceQA.</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p092">
+              <div class="card-index">#092</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="llava-w">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>LLaVA-W.</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p093">
+              <div class="card-index">#093</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="validation-of-motivation-in-section-motivation-for-idea-3-attention-shifts-as-dynamic-triggers">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Validation of Motivation in Section  motivation for idea 3: Attention Shifts as Dynamic Triggers</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p094">
+              <div class="card-index">#094</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="hyper-parameter-sensitivity-analysis">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Hyper-parameter Sensitivity Analysis</span>
+                  </summary>
+                  <p class="section-intro">敏感性分析解释阈值、候选数、选择数对性能和成本的影响。阅读重点是 AIM-CoT 是否依赖非常精细的调参。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p095">
+              <div class="card-index">#095</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="analysis-of-sensitivity-and-adaptivity">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Analysis of δ: Sensitivity and Adaptivity</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p096">
+              <div class="card-index">#096</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="sensitivity-analysis">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Sensitivity Analysis</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p097">
+              <div class="card-index">#097</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="adaptive-thresholding-strategy">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Adaptive Thresholding Strategy</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p098">
+              <div class="card-index">#098</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="sensitivity-analysis-of-k-n-c">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Sensitivity Analysis of K, N_C</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p099">
+              <div class="card-index">#099</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="qualitative-case-study-information-gain-vs-attention">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Qualitative Case Study: Information Gain vs. Attention</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p100">
+              <div class="card-index">#100</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="comprehensive-analysis-of-avp-component">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Comprehensive Analysis of AVP Component</span>
+                  </summary>
+                  <p class="section-intro">AVP 深入分析说明候选集构造、探索区域贡献、抗噪声能力和贪心近似合理性。它是方法可信度最关键的附录部分。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p101">
+              <div class="card-index">#101</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="construction-of-candidate-set-c-method-comparison">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Construction of Candidate Set C: Method Comparison</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p102">
+              <div class="card-index">#102</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="source-distribution-analysis-quantifying-contribution-of-exploratory-set-c-exp">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Source Distribution Analysis: Quantifying Contribution of Exploratory Set C_exp</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p103">
+              <div class="card-index">#103</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="robustness-of-avp-against-attention-noise">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Robustness of AVP Against Attention Noise</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p104">
+              <div class="card-index">#104</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="theoretical-justification-approximate-submodularity-and-optimality-of-greedy-selection">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Theoretical Justification: Approximate Submodularity and Optimality of Greedy Selection</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p105">
+              <div class="card-index">#105</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="extensive-ablation-studies-on-more-backbones">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Extensive Ablation Studies on More Backbones</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p106">
+              <div class="card-index">#106</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="in-depth-analysis-of-performance-gain-variations-across-backbones">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>In-depth Analysis of Performance Gain Variations Across Backbones</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p107">
+              <div class="card-index">#107</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="cross-family-analysis-architecture-and-visual-encoding">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Cross-Family Analysis: Architecture and Visual Encoding</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p108">
+              <div class="card-index">#108</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="intra-family-analysis-capability-dependence-and-scaling-laws">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Intra-Family Analysis: Capability Dependence and Scaling Laws</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p109">
+              <div class="card-index">#109</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="safety-mechanisms-in-aim-cot">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Safety Mechanisms in AIM-CoT</span>
+                  </summary>
+                  <p class="section-intro">安全机制讨论 CAG 幻觉和错误视觉插入的风险。这里说明作者意识到“插入视觉证据”可能误导模型，因此加了负约束和一致性检查。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p110">
+              <div class="card-index">#110</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="effectiveness-of-negative-constraints-in-cag-generation">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Effectiveness of Negative Constraints in CAG Generation</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p111">
+              <div class="card-index">#111</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="effectiveness-of-safety-instructions-in-dat-integration">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Effectiveness of Safety Instructions in DAT Integration</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p112">
+              <div class="card-index">#112</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" open id="deployment-of-aim-cot">
+                  <summary>
+                    <span class="section-level">H2</span>
+                    <span>Deployment of AIM-CoT</span>
+                  </summary>
+                  <p class="section-intro">部署分析说明 AVP 的额外计算开销来自候选区域的 lookahead 推理，但通过小候选集、批处理和 KV cache 控制成本。</p>
+                  <div class="section-body">
+                
+</div></details>
+
+                <details class="paper-section" id="analysis-of-the-complexity-of-avp-module">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Analysis of the Complexity of AVP Module</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+</div></details>
+
+                <details class="paper-section" id="overview-of-the-avp-module">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Overview of the AVP Module</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p113">
+              <div class="card-index">#113</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="definition-of-notations">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Definition of Notations</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p114">
+              <div class="card-index">#114</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="avp-triggering-in-the-method">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>AVP Triggering in the Method</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p115">
+              <div class="card-index">#115</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="method">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Method</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p116">
+              <div class="card-index">#116</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="method">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Method</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p117">
+              <div class="card-index">#117</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="overall-complexity-of-the-method">
+                  <summary>
+                    <span class="section-level">H5</span>
+                    <span>Overall Complexity of the Method</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p118">
+              <div class="card-index">#118</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+
+                <details class="paper-section" id="empirical-analysis-of-the-deployment-of-aim-cot">
+                  <summary>
+                    <span class="section-level">H3</span>
+                    <span>Empirical Analysis of the Deployment of AIM-CoT</span>
+                  </summary>
+                  <p class="section-intro">本节是论文论证链的一部分，建议先看标题判断它服务于问题定义、方法构造、实验验证还是部署分析。</p>
+                  <div class="section-body">
+                
+
+            <article class="reading-card" id="p119">
+              <div class="card-index">#119</div>
+              <div class="triple">
+                <section>
+                  <h4>Original</h4>
+                  <p>References are available in the original paper PDF and source.</p>
+                </section>
+                <section>
+                  <h4>中文翻译</h4>
+                  <p>原始论文 PDF 和来源中提供了参考资料。</p>
+                </section>
+                <section>
+                  <h4>详细讲解</h4>
+                  <ul><li>这段主要补足论文论证链中的一个局部环节。建议把它和所在小节标题一起读，判断它是在定义问题、给出方法、报告结果，还是解释限制。</li><li>对大模型/多模态大模型研究来说，值得关注的是它把一个经验式 prompt/CoT 流程拆成了可测量的内部状态和可插拔的决策模块。</li></ul>
+                </section>
+              </div>
+            </article>
+            
+</div></details>
+      </section>
+    </div>
+  </main>
+  <footer class="footer">
+    <p>本页基于论文作者发布的 arXiv 版本制作中文翻译与学习讲解。原论文许可为 <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International</a>；请以原论文为准。</p>
+  </footer>
+</body>
+</html>
