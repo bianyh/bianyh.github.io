@@ -3,75 +3,121 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Daily Paper Reading</title>
-  <meta name="description" content="大模型与多模态大模型论文每日精读。">
+  <meta name="theme-color" content="#f7f8fa">
+  <title>边宇晗 | Bian Yuhan</title>
+  <meta name="description" content="边宇晗的学术个人主页：大语言模型、推荐系统与智能体研究。">
   <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
   <header class="site-header">
-    <nav class="nav">
-      <a class="brand" href="index.html">Daily Paper Reading</a>
-      <div class="nav-links">
-        <a href="#today">今日论文</a>
-        <a href="#archive">阅读列表</a>
-        <a href="#workflow">流程</a>
+    <nav class="nav shell" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Bian Yuhan home"><span class="brand-mark">BY</span><span>边宇晗 <small>Bian Yuhan</small></span></a>
+      <div class="nav-tools">
+        <div class="nav-links" aria-label="Sections">
+          <a href="#about" data-zh="关于我" data-en="About">关于我</a>
+          <a href="#research" data-zh="研究方向" data-en="Research">研究方向</a>
+          <a href="#publications" data-zh="论文" data-en="Publications">论文</a>
+          <a href="#experience" data-zh="经历" data-en="Experience">经历</a>
+          <a href="#notes" data-zh="论文笔记" data-en="Notes">论文笔记</a>
+        </div>
+        <div class="language-switch" role="group" aria-label="Language switcher">
+          <button class="language-button is-active" type="button" data-lang="zh">中</button>
+          <span aria-hidden="true">/</span>
+          <button class="language-button" type="button" data-lang="en">EN</button>
+        </div>
       </div>
     </nav>
   </header>
-  <main>
-    <section class="hero">
-      <div>
-        <p class="kicker">LLM / Multimodal LLM Paper Notes</p>
-        <h1>每天读一篇近期顶会大模型论文</h1>
-        <p class="subtitle">聚焦大模型、多模态大模型、推理、记忆、知识、训练与评测。首页直接进入论文精读，不做额外介绍页。</p>
-      </div>
-      <aside class="meta-panel">
-        <dl class="meta-grid">
-          <div><dt>当前主题</dt><dd>多模态推理</dd></div>
-          <div><dt>选文来源</dt><dd>PaperNotes + arXiv</dd></div>
-          <div><dt>发布形式</dt><dd>逐段原文 / 翻译 / 讲解</dd></div>
-        </dl>
-      </aside>
-    </section>
-    <div class="content">
-      <section class="band" id="today">
-        <div class="section-title"><h2>今日论文</h2></div>
-        <article class="note-card">
-          <p class="eyebrow">2026-05-09</p>
-          <h3><a href="papers/aim-cot/index.html">AIM-CoT: Active Information-driven Multimodal Chain-of-Thought for Vision-Language Reasoning</a></h3>
-          <p>AIM-CoT 将多模态 CoT 中的视觉证据选择从被动注意力 Top-K 推向主动信息增益探查，并用动态注意力转移决定插入时机。</p>
-          <div class="buttons">
-            <a class="button primary" href="papers/aim-cot/index.html">阅读精读页</a>
-            <a class="button" href="papers/aim-cot/2509.25699v3.pdf">下载 PDF</a>
-          </div>
-        </article>
-      </section>
-      <section class="band" id="archive">
-        <div class="section-title"><h2>阅读列表</h2></div>
-        <table class="paper-list">
-          <thead><tr><th>日期</th><th>论文</th><th>方向</th><th>来源</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>2026-05-09</td>
-              <td><a href="papers/aim-cot/index.html">AIM-CoT: Active Information-driven Multimodal Chain-of-Thought for Vision-Language Reasoning</a></td>
-              <td>多模态大模型推理 / 视觉证据选择 / CoT</td>
-              <td><a href="https://papernotes.org/ICLR2026/llm_reasoning/aimcot_active_information-driven_multimodal_chain-of-thought_for_vision-language/">PaperNotes</a> / <a href="https://arxiv.org/abs/2509.25699">arXiv</a></td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-      <section class="band" id="workflow">
-        <div class="section-title"><h2>固定流程</h2></div>
-        <div class="grid">
-          <article class="note-card"><h3>1. 选文</h3><p>从 PaperNotes 近一年顶会条目中筛选 LLM、VLM、推理、记忆、知识、训练相关论文，并核对 arXiv 时间与许可。</p></article>
-          <article class="note-card"><h3>2. 精读</h3><p>下载 PDF/source，抽取段落和图表，生成英文原文、中文翻译、逐段解释和关键结果导读。</p></article>
-          <article class="note-card"><h3>3. 发布</h3><p>加入 GitHub Pages 静态站点，更新首页列表，完成本地检查后推送到 GitHub 仓库。</p></article>
+
+  <main id="top">
+    <section class="hero shell" id="about">
+      <div class="hero-copy">
+        <p class="eyebrow" data-zh="个人学术主页" data-en="Academic profile">个人学术主页</p>
+        <h1><span data-zh="边宇晗" data-en="Bian Yuhan">边宇晗</span><span class="name-latin" data-zh="Bian Yuhan" data-en="边宇晗">Bian Yuhan</span></h1>
+        <p class="role" data-zh="中国人民大学 · 计算机科学与技术 · 硕士研究生一年级" data-en="M.S. student in Computer Science · Renmin University of China">中国人民大学 · 计算机科学与技术 · 硕士研究生一年级</p>
+        <p class="intro" data-zh="我关注大语言模型、推荐系统与智能体系统，致力于探索知识、行为与推理之间的连接。本科期间在西安电子科技大学开展科研，目前师从李直旭教授。" data-en="I study large language models, recommender systems, and agentic systems, with a focus on the connections between knowledge, behavior, and reasoning. I conducted undergraduate research at Xidian University and am currently advised by Professor Zhixu Li.">我关注大语言模型、推荐系统与智能体系统，致力于探索知识、行为与推理之间的连接。本科期间在西安电子科技大学开展科研，目前师从李直旭教授。</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="mailto:xilinghuiye@qq.com" data-zh="联系我" data-en="Get in touch">联系我</a>
+          <a class="button button-quiet" href="https://scholar.google.com/citations?user=MPz-B4EAAAAJ&hl=zh-CN" target="_blank" rel="noreferrer">Google Scholar <span aria-hidden="true">↗</span></a>
+          <a class="button button-quiet" href="https://github.com/bianyh/" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
         </div>
-      </section>
-    </div>
+      </div>
+      <div class="hero-visual">
+        <div class="profile-frame">
+          <img src="assets/profile.jpg" alt="边宇晗的个人视觉头像" data-alt-zh="边宇晗的个人视觉头像" data-alt-en="Personal visual avatar of Bian Yuhan">
+          <span class="frame-label" data-zh="研究 · 学习 · 分享" data-en="Research · Learn · Share">研究 · 学习 · 分享</span>
+        </div>
+        <div class="quick-facts">
+          <div><span class="fact-label" data-zh="当前" data-en="Now">当前</span><strong data-zh="中国人民大学" data-en="Renmin University of China">中国人民大学</strong></div>
+          <div><span class="fact-label" data-zh="导师" data-en="Advisor">导师</span><strong data-zh="李直旭教授" data-en="Prof. Zhixu Li">李直旭教授</strong></div>
+          <div><span class="fact-label" data-zh="研究记录" data-en="Notes">研究记录</span><strong data-zh="每日论文精读" data-en="Daily paper notes">每日论文精读</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="signal-bar shell" aria-label="Highlights">
+      <div><strong>2025</strong><span data-zh="ACM RecSys Oral" data-en="ACM RecSys Oral">ACM RecSys Oral</span></div>
+      <div><strong>2026</strong><span data-zh="腾讯开悟西北赛区决赛一等奖" data-en="Tencent Kaiwu · 1st Prize">腾讯开悟西北赛区决赛一等奖</span></div>
+      <div><strong>01</strong><span data-zh="篇已发表论文" data-en="Published paper">篇已发表论文</span></div>
+      <div><strong>∞</strong><span data-zh="持续学习中" data-en="Always learning">持续学习中</span></div>
+    </section>
+
+    <section class="content shell" id="research">
+      <div class="section-heading">
+        <p class="eyebrow" data-zh="研究兴趣" data-en="Research interests">研究兴趣</p>
+        <h2 data-zh="让模型理解知识，也理解行为。" data-en="Building models that understand knowledge and behavior.">让模型理解知识，也理解行为。</h2>
+        <p data-zh="目前的研究兴趣横跨推荐系统与大模型，希望在真实用户行为、结构化知识和可解释推理之间建立更可靠的联系。" data-en="My research spans recommender systems and large language models. I am interested in reliable connections between real-world user behavior, structured knowledge, and interpretable reasoning.">目前的研究兴趣横跨推荐系统与大模型，希望在真实用户行为、结构化知识和可解释推理之间建立更可靠的联系。</p>
+      </div>
+      <div class="research-grid">
+        <article class="research-item"><span class="item-number">01</span><h3 data-zh="大语言模型" data-en="Large Language Models">大语言模型</h3><p data-zh="关注模型知识、推理能力与后训练方法，探索如何让模型更有效地学习和使用知识。" data-en="Model knowledge, reasoning, and post-training methods, with an emphasis on how models learn and use knowledge more effectively.">关注模型知识、推理能力与后训练方法，探索如何让模型更有效地学习和使用知识。</p></article>
+        <article class="research-item"><span class="item-number">02</span><h3 data-zh="推荐系统" data-en="Recommender Systems">推荐系统</h3><p data-zh="研究多行为建模、课程推荐与认知蒸馏，让推荐结果更贴合用户的真实兴趣和学习路径。" data-en="Multi-behavior modeling and course recommendation, using cognitive distillation to better reflect users' interests and learning paths.">研究多行为建模、课程推荐与认知蒸馏，让推荐结果更贴合用户的真实兴趣和学习路径。</p></article>
+        <article class="research-item"><span class="item-number">03</span><h3 data-zh="智能体系统" data-en="Agentic Systems">智能体系统</h3><p data-zh="关注工具使用、规划与记忆机制，探索可以持续感知、行动并改进的 AI 系统。" data-en="Tool use, planning, and memory mechanisms for AI systems that can perceive, act, and improve over time.">关注工具使用、规划与记忆机制，探索可以持续感知、行动并改进的 AI 系统。</p></article>
+      </div>
+    </section>
+
+    <section class="content shell split-section" id="experience">
+      <div class="section-heading compact-heading">
+        <p class="eyebrow" data-zh="教育与科研经历" data-en="Education & research">教育与科研经历</p>
+        <h2 data-zh="从软件工程走向智能系统。" data-en="From software engineering to intelligent systems.">从软件工程走向智能系统。</h2>
+      </div>
+      <div class="timeline">
+        <article class="timeline-item current"><div class="timeline-date">2026 — <span data-zh="至今" data-en="present">至今</span></div><div><h3><a href="https://www.ruc.edu.cn/" target="_blank" rel="noreferrer" data-zh="中国人民大学" data-en="Renmin University of China">中国人民大学</a></h3><p class="timeline-role" data-zh="计算机科学与技术 · 硕士研究生" data-en="Computer Science · M.S. student">计算机科学与技术 · 硕士研究生</p><p data-zh="师从李直旭教授。" data-en="Advised by Professor Zhixu Li.">师从李直旭教授。</p></div></article>
+        <article class="timeline-item"><div class="timeline-date">2022 — 2026</div><div><h3><a href="https://www.xidian.edu.cn/" target="_blank" rel="noreferrer" data-zh="西安电子科技大学" data-en="Xidian University">西安电子科技大学</a></h3><p class="timeline-role" data-zh="软件工程 · 工学学士" data-en="Software Engineering · B.Eng.">软件工程 · 工学学士</p><p><span data-zh="在" data-en="Worked with ">在</span><a href="https://faculty.xidian.edu.cn/CH2/zh_CN/index.htm" target="_blank" rel="noreferrer" data-zh="褚华" data-en="Hua Chu">褚华</a><span data-zh="、" data-en=", ">、</span><a href="https://faculty.xidian.edu.cn/LJN1/zh_CN/index.htm" target="_blank" rel="noreferrer" data-zh="李佳楠" data-en="Jianan Li">李佳楠</a><span data-zh="老师组中学习，并与" data-en="'s groups, and conducted research with ">老师组中学习，并与</span><a href="https://faculty.xidian.edu.cn/zhouyangtao/zh_CN/index.htm" target="_blank" rel="noreferrer" data-zh="周洋涛" data-en="Yangtao Zhou">周洋涛</a><span data-zh="老师合作开展科研。" data-en=".">老师合作开展科研。</span></p></div></article>
+      </div>
+    </section>
+
+    <section class="content shell" id="publications">
+      <div class="section-heading row-heading"><div><p class="eyebrow" data-zh="代表性论文" data-en="Selected publication">代表性论文</p><h2 data-zh="一项关于课程推荐的研究。" data-en="A study on course recommendation.">一项关于课程推荐的研究。</h2></div><a class="text-link" href="https://scholar.google.com/citations?user=MPz-B4EAAAAJ&hl=zh-CN" target="_blank" rel="noreferrer" data-zh="查看 Google Scholar ↗" data-en="View Google Scholar ↗">查看 Google Scholar ↗</a></div>
+      <article class="publication-card">
+        <div class="publication-meta"><span class="pill pill-accent">ACM RecSys 2025</span><span class="pill" data-zh="口头报告" data-en="Oral presentation">口头报告</span></div>
+        <h3><a href="https://dl.acm.org/doi/10.1145/3705328.3748083" target="_blank" rel="noreferrer">Breaking Knowledge Boundaries: Cognitive Distillation-enhanced Cross-Behavior Course Recommendation Model ↗</a></h3>
+        <p class="authors" data-zh="发表记录 · ACM RecSys 2025" data-en="Publication record · ACM RecSys 2025">发表记录 · ACM RecSys 2025</p>
+        <p data-zh="通过认知蒸馏增强跨行为建模，研究课程推荐中的知识迁移与用户行为表征。" data-en="A cognitive distillation-enhanced cross-behavior model for knowledge transfer and user behavior representation in course recommendation.">通过认知蒸馏增强跨行为建模，研究课程推荐中的知识迁移与用户行为表征。</p>
+        <div class="publication-actions"><a class="button button-primary" href="https://dl.acm.org/doi/10.1145/3705328.3748083" target="_blank" rel="noreferrer" data-zh="阅读论文" data-en="Read paper">阅读论文 <span aria-hidden="true">↗</span></a><span class="publication-note" data-zh="ACM Digital Library · 2025" data-en="ACM Digital Library · 2025">ACM Digital Library · 2025</span></div>
+      </article>
+    </section>
+
+    <section class="content shell split-section awards-section" id="awards">
+      <div class="section-heading compact-heading"><p class="eyebrow" data-zh="荣誉与奖项" data-en="Honors & awards">荣誉与奖项</p><h2 data-zh="把好奇心变成可交付的成果。" data-en="Turning curiosity into work that ships.">把好奇心变成可交付的成果。</h2></div>
+      <div class="award-list">
+        <article class="award-item"><span class="award-year">2026</span><div><h3><a href="https://ai.tencent.com/" target="_blank" rel="noreferrer" data-zh="腾讯开悟西北赛区决赛一等奖" data-en="First Prize · Tencent Kaiwu Northwest Regional Final">腾讯开悟西北赛区决赛一等奖</a></h3><p data-zh="腾讯开悟大模型应用与研究竞赛。" data-en="Tencent Kaiwu competition on large-model applications and research.">腾讯开悟大模型应用与研究竞赛。</p></div></article>
+        <article class="award-item"><span class="award-year">2023</span><div><h3><a href="https://www.comap.com/contests/mcm-icm/" target="_blank" rel="noreferrer" data-zh="美国大学生数学建模竞赛 F 奖" data-en="Finalist Award · MCM/ICM 2023">美国大学生数学建模竞赛 F 奖</a></h3><p data-zh="Mathematical Contest in Modeling / Interdisciplinary Contest in Modeling。" data-en="Mathematical Contest in Modeling / Interdisciplinary Contest in Modeling.">Mathematical Contest in Modeling / Interdisciplinary Contest in Modeling。</p></div></article>
+        <article class="award-item"><span class="award-year">—</span><div><h3><a href="https://www.xidian.edu.cn/" target="_blank" rel="noreferrer" data-zh="校级优秀学生 · 校一等奖学金" data-en="Outstanding Student · First-class University Scholarship">校级优秀学生 · 校一等奖学金</a></h3><p data-zh="西安电子科技大学本科期间获得。" data-en="Awarded during undergraduate study at Xidian University.">西安电子科技大学本科期间获得。</p></div></article>
+      </div>
+    </section>
+
+    <section class="notes-band shell" id="notes">
+      <div><p class="eyebrow" data-zh="研究记录" data-en="Research notes">研究记录</p><h2 data-zh="每天读一篇论文，留下可复用的思考。" data-en="One paper a day, with notes worth revisiting.">每天读一篇论文，留下可复用的思考。</h2><p data-zh="我正在维护一个面向大模型与多模态大模型的论文精读站，记录原文、翻译、图表和自己的理解。" data-en="I maintain a reading notebook for LLM and multimodal LLM papers, with original text, translation, figures, and my own explanations.">我正在维护一个面向大模型与多模态大模型的论文精读站，记录原文、翻译、图表和自己的理解。</p></div>
+      <a class="button button-dark" href="papers/aim-cot/index.html"><span data-zh="进入论文笔记" data-en="Open paper notes">进入论文笔记</span><span aria-hidden="true">↗</span></a>
+    </section>
+
+    <section class="contact shell" id="contact">
+      <div><p class="eyebrow" data-zh="保持联系" data-en="Contact">保持联系</p><h2 data-zh="欢迎交流研究、项目或一篇好论文。" data-en="Open to research conversations, projects, and good papers.">欢迎交流研究、项目或一篇好论文。</h2></div>
+      <div class="contact-links"><a href="mailto:xilinghuiye@qq.com">xilinghuiye@qq.com</a><a href="https://orcid.org/0009-0001-0312-8101" target="_blank" rel="noreferrer">ORCID ↗</a><a href="https://github.com/bianyh/" target="_blank" rel="noreferrer">GitHub ↗</a><a href="https://scholar.google.com/citations?user=MPz-B4EAAAAJ&hl=zh-CN" target="_blank" rel="noreferrer">Google Scholar ↗</a><span data-zh="公众号：汐的小世界" data-en="WeChat: 汐的小世界">公众号：汐的小世界</span></div>
+    </section>
   </main>
-  <footer class="footer">
-    <p>Built as a static GitHub Pages reading notebook.</p>
-  </footer>
+
+  <footer class="footer shell"><span>© 2026 Bian Yuhan</span><span data-zh="用好奇心做研究，用文字留下记录。" data-en="Research with curiosity, notes with care.">用好奇心做研究，用文字留下记录。</span><a href="#top" data-zh="回到顶部 ↑" data-en="Back to top ↑">回到顶部 ↑</a></footer>
+  <script src="assets/site.js"></script>
 </body>
 </html>
